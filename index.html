@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RED LINER — RELEASE</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  :root{
+    --black:#060606;
+    --red:#e2101f;
+    --red-deep:#7a0a13;
+    --white:#f5f5f0;
+    --grey:#4a4a4a;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html,body{
+    height:100%;
+    background:var(--black);
+    color:var(--white);
+    font-family:'Oswald', sans-serif;
+    overflow-x:hidden;
+  }
+
+  .grain{
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:6;
+    opacity:0.16;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain 0.35s steps(4) infinite;
+  }
+  @keyframes grain{
+    0%{transform:translate(0,0)}
+    25%{transform:translate(-2%,1%)}
+    50%{transform:translate(1%,-2%)}
+    75%{transform:translate(-1%,2%)}
+    100%{transform:translate(0,0)}
+  }
+
+  .vignette{
+    position:fixed; inset:0;
+    pointer-events:none; z-index:4;
+    background:
+      radial-gradient(circle at 50% 55%, transparent 30%, rgba(122,10,19,0.5) 100%),
+      linear-gradient(180deg, rgba(226,16,31,0.05), transparent 25%, transparent 75%, rgba(0,0,0,0.65));
+    animation:ambientPulse 5s ease-in-out infinite;
+  }
+  @keyframes ambientPulse{
+    0%,100%{ opacity:0.85; }
+    50%{ opacity:1; }
+  }
+
+  .scanlines{
+    position:fixed; inset:0;
+    z-index:3; pointer-events:none;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.025) 0px,
+      rgba(255,255,255,0.025) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+    opacity:0.5;
+  }
+
+  .sweep{
+    position:fixed; inset:0;
+    z-index:2; pointer-events:none;
+    overflow:hidden;
+  }
+  .sweep::before{
+    content:"";
+    position:absolute;
+    top:-50%; left:-20%;
+    width:60%; height:200%;
+    background:linear-gradient(100deg, transparent 40%, rgba(226,16,31,0.10) 50%, transparent 60%);
+    transform:rotate(8deg);
+    animation:sweepMove 7s linear infinite;
+  }
+  @keyframes sweepMove{
+    0%{ left:-40%; }
+    100%{ left:120%; }
+  }
+
+  /* GLITCH digital - distorsion RGB + blocs */
+  .errorFlash{
+    position:fixed; inset:0;
+    z-index:9; pointer-events:none;
+    opacity:0;
+  }
+  .errorFlash.active{
+    animation:errorBurst 0.5s steps(6);
+  }
+  .errorFlash::before,
+  .errorFlash::after{
+    content:"";
+    position:absolute; inset:0;
+    background:var(--white);
+    mix-blend-mode:difference;
+    opacity:0;
+  }
+  .errorFlash.active::before{
+    animation:rgbShiftA 0.5s steps(6);
+    background:linear-gradient(90deg, transparent 0%, rgba(226,16,31,0.6) 2%, transparent 4%, transparent 30%, rgba(0,234,255,0.5) 32%, transparent 34%);
+  }
+  .errorFlash.active::after{
+    animation:rgbShiftB 0.5s steps(6);
+    background:repeating-linear-gradient(
+      0deg,
+      transparent 0px, transparent 3px,
+      rgba(255,255,255,0.08) 3px, rgba(255,255,255,0.08) 4px
+    );
+  }
+  @keyframes errorBurst{
+    0%{ opacity:0; }
+    8%{ opacity:1; }
+    16%{ opacity:0; }
+    24%{ opacity:0.8; }
+    32%{ opacity:0; }
+    48%{ opacity:0.6; }
+    56%{ opacity:0; }
+    100%{ opacity:0; }
+  }
+  @keyframes rgbShiftA{
+    0%{ opacity:0; transform:translateX(0); }
+    10%{ opacity:0.9; transform:translateX(-12px); }
+    20%{ opacity:0; }
+    30%{ opacity:0.7; transform:translateX(10px); }
+    40%{ opacity:0; }
+    100%{ opacity:0; }
+  }
+  @keyframes rgbShiftB{
+    0%{ opacity:0; transform:translateY(0); }
+    15%{ opacity:0.6; transform:translateY(-6px); }
+    30%{ opacity:0; }
+    50%{ opacity:0.5; transform:translateY(4px); }
+    65%{ opacity:0; }
+    100%{ opacity:0; }
+  }
+
+  /* secousse globale de l'écran pendant le glitch */
+  .shake{
+    animation:shake 0.5s steps(8);
+  }
+  @keyframes shake{
+    0%,100%{ transform:translate(0,0); }
+    12%{ transform:translate(-4px,2px); }
+    24%{ transform:translate(4px,-3px); }
+    36%{ transform:translate(-3px,-1px); }
+    48%{ transform:translate(2px,2px); }
+    60%{ transform:translate(0,0); }
+    72%{ transform:translate(-2px,1px); }
+    84%{ transform:translate(3px,-1px); }
+  }
+
+  /* ÉCRAN CASSÉ - verre fissuré qui apparait/disparait */
+  .crack{
+    position:fixed; inset:0;
+    z-index:10; pointer-events:none;
+    opacity:0;
+  }
+  .crack svg{ width:100%; height:100%; }
+  .crack .line{
+    stroke:rgba(255,255,255,0.85);
+    stroke-width:1.4;
+    fill:none;
+    filter:drop-shadow(0 0 2px rgba(226,16,31,0.9));
+  }
+  .crack .impact{
+    stroke:rgba(255,255,255,0.95);
+    stroke-width:2.2;
+    fill:none;
+  }
+  .crack.active{
+    animation:crackFlash 0.45s steps(4);
+  }
+  @keyframes crackFlash{
+    0%{ opacity:0; }
+    10%{ opacity:1; }
+    35%{ opacity:0; }
+    55%{ opacity:0.7; }
+    70%{ opacity:0; }
+    100%{ opacity:0; }
+  }
+  .crack.stuck{
+    opacity:1;
+    animation:none;
+  }
+
+  /* ---- Scrollbar navigateur custom rouge/glitch ---- */
+  html{
+    scrollbar-width:thin;
+    scrollbar-color:var(--red) rgba(122,10,19,0.15);
+  }
+  ::-webkit-scrollbar{
+    width:12px;
+  }
+  ::-webkit-scrollbar-track{
+    background:
+      repeating-linear-gradient(
+        0deg,
+        rgba(122,10,19,0.25) 0px, rgba(122,10,19,0.25) 2px,
+        rgba(6,6,6,0.6) 2px, rgba(6,6,6,0.6) 4px
+      );
+    border-left:1px solid var(--red-deep);
+  }
+  ::-webkit-scrollbar-thumb{
+    background:linear-gradient(180deg, var(--red), var(--red-deep));
+    border:1px solid #ff2b3a;
+    box-shadow:
+      0 0 8px rgba(226,16,31,0.7),
+      inset 0 0 4px rgba(255,255,255,0.2);
+  }
+  ::-webkit-scrollbar-thumb:hover{
+    background:var(--red);
+    box-shadow:0 0 14px rgba(226,16,31,0.9);
+  }
+
+  /* ---- Bouton audio + panneau spotify ---- */
+  .audio-zone{
+    position:fixed;
+    bottom:26px; right:26px;
+    z-index:12;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:14px;
+  }
+  .audio-btn{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--red);
+    background:rgba(6,6,6,0.85);
+    border:1px solid var(--red);
+    padding:11px 22px;
+    cursor:pointer;
+    transition:color .25s, background .25s;
+    backdrop-filter:blur(4px);
+  }
+  .audio-btn:hover{ color:var(--black); background:var(--red); }
+
+  .spotify-wrap{
+    width:300px;
+    max-width:80vw;
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height .4s ease, opacity .4s ease;
+    background:#060606;
+    border:0;
+  }
+  .spotify-wrap.open{
+    max-height:172px;
+    opacity:1;
+    border:1px solid var(--red);
+    box-shadow:0 0 18px rgba(226,16,31,0.35);
+  }
+  .spotify-wrap iframe{
+    width:100%; height:152px; border:0; display:block;
+  }
+
+  @media (max-width:760px){
+    .audio-zone{ bottom:16px; right:16px; }
+  }
+
+  /* glitch texte sur le titre lors du burst */
+  .titlewrap.glitching h1.base{
+    animation:textGlitch 0.5s steps(6);
+  }
+  @keyframes textGlitch{
+    0%,100%{ clip-path:inset(0 0 0 0); transform:translate(0,0); }
+    16%{ clip-path:inset(20% 0 30% 0); transform:translate(8px,0); }
+    32%{ clip-path:inset(60% 0 5% 0); transform:translate(-8px,0); }
+    48%{ clip-path:inset(10% 0 70% 0); transform:translate(4px,0); }
+    64%{ clip-path:inset(0 0 0 0); transform:translate(0,0); }
+  }
+
+  main{
+    position:relative;
+    z-index:5;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:24px;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.4em;
+    font-size:clamp(10px,1.4vw,14px);
+    color:var(--red);
+    text-transform:uppercase;
+    opacity:0.9;
+    margin-bottom:18px;
+    border-top:1px solid var(--red-deep);
+    border-bottom:1px solid var(--red-deep);
+    padding:6px 14px;
+    position:relative;
+    animation:eyebrowGlitch 4.5s infinite;
+  }
+  @keyframes eyebrowGlitch{
+    0%,96%,100%{ transform:translateX(0); opacity:0.9; }
+    97%{ transform:translateX(-3px); opacity:0.6; }
+    98%{ transform:translateX(2px); opacity:1; }
+  }
+
+  .titlewrap{
+    position:relative;
+    display:inline-block;
+  }
+
+  h1{
+    font-size:clamp(50px, 15vw, 170px);
+    font-weight:700;
+    letter-spacing:0.04em;
+    line-height:0.95;
+    text-transform:uppercase;
+    color:var(--white);
+    position:relative;
+    text-shadow:0 0 25px rgba(226,16,31,0.35);
+  }
+  h1 span{ color:var(--red); }
+
+  h1 .glitchLayer{
+    position:absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    color:var(--white);
+    overflow:hidden;
+    clip-path:inset(0 0 0 0);
+  }
+  h1 .glitchLayer.red{
+    color:var(--red);
+    mix-blend-mode:screen;
+    animation:glitchRed 3.2s infinite steps(1);
+  }
+  h1 .glitchLayer.cyan{
+    color:#00eaff;
+    mix-blend-mode:screen;
+    animation:glitchCyan 3.2s infinite steps(1);
+  }
+  @keyframes glitchRed{
+    0%,100%{ transform:translate(0,0); opacity:0; clip-path:inset(0 0 0 0); }
+    42%{ opacity:0; }
+    43%{ opacity:0.85; transform:translate(4px,-2px); clip-path:inset(10% 0 60% 0); }
+    44%{ transform:translate(-3px,1px); clip-path:inset(50% 0 10% 0); }
+    45%{ opacity:0; }
+    78%{ opacity:0; }
+    79%{ opacity:0.8; transform:translate(-5px,0); clip-path:inset(70% 0 5% 0); }
+    80%{ opacity:0; }
+  }
+  @keyframes glitchCyan{
+    0%,100%{ transform:translate(0,0); opacity:0; clip-path:inset(0 0 0 0); }
+    42%{ opacity:0; }
+    43%{ opacity:0.7; transform:translate(-4px,2px); clip-path:inset(20% 0 50% 0); }
+    44%{ transform:translate(3px,-1px); clip-path:inset(60% 0 15% 0); }
+    45%{ opacity:0; }
+    78%{ opacity:0; }
+    79%{ opacity:0.7; transform:translate(5px,0); clip-path:inset(5% 0 70% 0); }
+    80%{ opacity:0; }
+  }
+
+  h1 .base{
+    animation:flicker 6s infinite;
+  }
+  @keyframes flicker{
+    0%,93%,100%{ opacity:1; }
+    94%{ opacity:0.82; }
+    95%{ opacity:1; }
+    96%{ opacity:0.7; }
+    97%{ opacity:1; }
+  }
+
+  .subtitle{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(14px, 2.5vw, 22px);
+    color:var(--grey);
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    margin-top:14px;
+    margin-bottom:55px;
+  }
+  .subtitle .hr{
+    color:var(--red);
+  }
+
+  .countdown{
+    display:flex;
+    gap:clamp(10px,2vw,40px);
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  .unit{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-width:90px;
+  }
+
+  .value{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(36px, 8vw, 80px);
+    font-weight:700;
+    color:var(--white);
+    background:rgba(226,16,31,0.05);
+    border:1px solid var(--red-deep);
+    padding:8px 4px;
+    width:100%;
+    text-align:center;
+    position:relative;
+    box-shadow: inset 0 0 30px rgba(226,16,31,0.18);
+    overflow:hidden;
+  }
+  .value::before{
+    content:"";
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(180deg, rgba(226,16,31,0.25), transparent 60%);
+    opacity:0;
+    animation:tick 1s steps(1) infinite;
+  }
+  @keyframes tick{
+    0%{ opacity:0.5; }
+    15%{ opacity:0; }
+    100%{ opacity:0; }
+  }
+
+  .label{
+    margin-top:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(10px,1.5vw,13px);
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:var(--grey);
+  }
+
+  .separator{
+    align-self:center;
+    font-size:clamp(24px,5vw,60px);
+    color:var(--red-deep);
+    font-weight:700;
+    margin-top:-10px;
+    animation:colonBlink 1s steps(1) infinite;
+  }
+  @keyframes colonBlink{
+    0%,49%{ opacity:1; }
+    50%,100%{ opacity:0.25; }
+  }
+
+  .links{
+    margin-top:50px;
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  .btn{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    font-size:clamp(11px,1.6vw,14px);
+    color:var(--white);
+    border:1px solid var(--red-deep);
+    padding:14px 28px;
+    text-decoration:none;
+    position:relative;
+    overflow:hidden;
+    transition:color 0.3s, border-color 0.3s;
+  }
+  .btn::before{
+    content:"";
+    position:absolute;
+    top:0; left:-100%;
+    width:100%; height:100%;
+    background:var(--red);
+    transition:left 0.35s ease;
+    z-index:-1;
+  }
+  .btn:hover{
+    color:var(--black);
+    border-color:var(--red);
+  }
+  .btn:hover::before{
+    left:0;
+  }
+  .btn-primary{
+    border-color:var(--red);
+    color:var(--red);
+    animation:pulse 1.6s infinite;
+  }
+  .btn-primary:hover{ color:var(--black); }
+  @keyframes pulse{
+    0%,100%{ box-shadow:0 0 0px rgba(226,16,31,0); }
+    50%{ box-shadow:0 0 22px rgba(226,16,31,0.6); }
+  }
+
+  .live{
+    display:none;
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    font-size:clamp(16px,2.5vw,22px);
+    color:var(--red);
+    border:1px solid var(--red);
+    padding:16px 40px;
+    margin-top:40px;
+    text-decoration:none;
+    animation:pulse 1.4s infinite, liveGlitch 4s infinite;
+  }
+  @keyframes liveGlitch{
+    0%,90%,100%{ transform:translate(0,0); }
+    91%{ transform:translate(-2px,1px); }
+    92%{ transform:translate(2px,-1px); }
+    93%{ transform:translate(0,0); }
+  }
+
+  footer{
+    margin-top:65px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    color:var(--grey);
+    opacity:0.65;
+  }
+
+  .corner{
+    position:fixed;
+    width:40px; height:40px;
+    border:2px solid var(--red-deep);
+    z-index:7;
+    opacity:0.6;
+  }
+  .corner.tl{ top:18px; left:18px; border-right:none; border-bottom:none; }
+  .corner.tr{ top:18px; right:18px; border-left:none; border-bottom:none; }
+  .corner.bl{ bottom:18px; left:18px; border-right:none; border-top:none; }
+  .corner.br{ bottom:18px; right:18px; border-left:none; border-top:none; }
+
+  /* Overlay écran noir final */
+  .blackout{
+    position:fixed; inset:0;
+    z-index:50;
+    background:#000;
+    opacity:0;
+    pointer-events:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:opacity 0.6s ease;
+  }
+  .blackout.active{
+    opacity:1;
+    pointer-events:all;
+  }
+  .blackout-content{
+    text-align:center;
+    opacity:0;
+    transform:scale(0.9);
+    transition:opacity 0.8s ease, transform 0.8s ease;
+    transition-delay:0.5s;
+  }
+  .blackout.show-content .blackout-content{
+    opacity:1;
+    transform:scale(1);
+  }
+  .blackout h2{
+    font-family:'Oswald', sans-serif;
+    font-size:clamp(40px, 10vw, 110px);
+    font-weight:700;
+    text-transform:uppercase;
+    color:var(--white);
+    letter-spacing:0.05em;
+    text-shadow:0 0 30px rgba(226,16,31,0.5);
+  }
+  .blackout h2 span{ color:var(--red); }
+  .blackout .blackout-links{
+    margin-top:40px;
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+<div class="sweep"></div>
+<div class="errorFlash" id="errorFlash"></div>
+<div class="crack" id="crack" aria-hidden="true">
+  <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+    <!-- point d'impact -->
+    <polygon class="impact" points="940,520 970,500 1000,525 985,560 955,565 935,545"/>
+    <!-- fissures radiales -->
+    <path class="line" d="M960,530 L1180,300 L1260,340 L1400,180"/>
+    <path class="line" d="M960,530 L1240,560 L1500,500 L1750,560"/>
+    <path class="line" d="M960,530 L1120,780 L1180,920 L1300,1050"/>
+    <path class="line" d="M960,530 L760,720 L640,880 L560,1040"/>
+    <path class="line" d="M960,530 L700,560 L420,520 L160,580"/>
+    <path class="line" d="M960,530 L800,300 L700,160 L640,40"/>
+    <path class="line" d="M960,530 L980,260 L1020,120 L1000,0"/>
+    <!-- fissures secondaires reliant les radiales -->
+    <path class="line" d="M1180,300 L1240,560"/>
+    <path class="line" d="M1240,560 L1120,780"/>
+    <path class="line" d="M1120,780 L760,720"/>
+    <path class="line" d="M760,720 L700,560"/>
+    <path class="line" d="M700,560 L800,300"/>
+    <path class="line" d="M800,300 L980,260"/>
+    <path class="line" d="M980,260 L1180,300"/>
+    <path class="line" d="M1500,500 L1300,1050"/>
+    <path class="line" d="M420,520 L560,1040"/>
+    <path class="line" d="M1400,180 L1020,120"/>
+  </svg>
+</div>
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+
+<div class="audio-zone">
+  <div class="spotify-wrap" id="spotifyWrap">
+    <iframe id="spotifyFrame"
+      src="https://open.spotify.com/embed/playlist/09edtb5s3VCzdLJMfOFDjQ?utm_source=generator&theme=0"
+      loading="lazy"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  </div>
+  <button class="audio-btn" id="audioBtn">&#9654; LANCER L&rsquo;AMBIANCE</button>
+</div>
+
+<div class="blackout" id="blackout">
+  <div class="blackout-content">
+    <h2>RED<span>LINER</span></h2>
+    <div class="subtitle" style="margin-top:10px; margin-bottom:0;">C'est <span class="hr">disponible maintenant</span></div>
+    <div class="blackout-links">
+      <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn btn-primary">Jouer maintenant</a>
+      <a href="https://discord.gg/redliner" target="_blank" class="btn">Discord</a>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="eyebrow">// Release Sequence Engaged</div>
+
+  <div class="titlewrap">
+    <h1 class="base">RED<span>LINER</span></h1>
+    <h1 class="glitchLayer red" aria-hidden="true">RED<span>LINER</span></h1>
+    <h1 class="glitchLayer cyan" aria-hidden="true">RED<span>LINER</span></h1>
+  </div>
+
+  <div class="subtitle">Le compte à rebours a commencé</div>
+
+  <div class="countdown" id="countdown">
+    <div class="unit" id="daysUnit" style="display:none;"><div class="value" id="days">00</div><div class="label">Jours</div></div>
+    <div class="separator" id="daysSep" style="display:none;">:</div>
+    <div class="unit"><div class="value" id="hours">00</div><div class="label">Heures</div></div>
+    <div class="separator">:</div>
+    <div class="unit"><div class="value" id="minutes">00</div><div class="label">Minutes</div></div>
+    <div class="separator">:</div>
+    <div class="unit"><div class="value" id="seconds">00</div><div class="label">Secondes</div></div>
+  </div>
+
+  <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="live" id="liveBtn">→ Jouer maintenant</a>
+
+  <div class="links">
+    <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn btn-primary">Page du jeu</a>
+    <a href="https://youtu.be/kR3q2EPYiEY" target="_blank" class="btn">Trailer</a>
+  </div>
+
+  <footer>
+    PC / Console — KBM only at launch
+    <div id="sysLog" style="margin-top:14px; color:var(--red); opacity:0.8; transition:opacity 0.3s; font-size:10px;"></div>
+  </footer>
+</main>
+
+<script>
+  // ---- Configuration ----
+  // Cible : 13 juin 2026, 22:00 heure de Paris (CEST = UTC+2) => 20:00 UTC
+  const target = new Date("2026-06-13T20:00:00Z").getTime();
+
+  // ---- Références DOM (déclarées AVANT tout appel) ----
+  const hoursEl     = document.getElementById('hours');
+  const minutesEl   = document.getElementById('minutes');
+  const secondsEl   = document.getElementById('seconds');
+  const liveBtn     = document.getElementById('liveBtn');
+  const countdownEl = document.getElementById('countdown');
+  const errorFlash  = document.getElementById('errorFlash');
+  const crack       = document.getElementById('crack');
+  const titlewrap   = document.querySelector('.titlewrap');
+  const blackout    = document.getElementById('blackout');
+  const body        = document.body;
+
+  let ended = false;
+  let glitchTimeoutRef = null;
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  // ---- Glitch / écran cassé ----
+  function triggerGlitch(){
+    errorFlash.classList.remove('active');
+    crack.classList.remove('active');
+    body.classList.remove('shake');
+    titlewrap.classList.remove('glitching');
+    void errorFlash.offsetWidth;
+    void crack.offsetWidth;
+    errorFlash.classList.add('active');
+    crack.classList.add('active');
+    body.classList.add('shake');
+    titlewrap.classList.add('glitching');
+    setTimeout(()=>{
+      errorFlash.classList.remove('active');
+      crack.classList.remove('active');
+      body.classList.remove('shake');
+      titlewrap.classList.remove('glitching');
+    }, 550);
+  }
+
+  // Fréquence du glitch : s'intensifie en approchant de 0
+  function getGlitchDelay(){
+    const minutesLeft = (target - Date.now()) / (1000*60);
+    if(minutesLeft > 60) return 5000 + Math.random()*6000;
+    if(minutesLeft > 30) return 3000 + Math.random()*4000;
+    if(minutesLeft > 10) return 1800 + Math.random()*2500;
+    if(minutesLeft > 5)  return 1000 + Math.random()*1500;
+    if(minutesLeft > 1)  return 500 + Math.random()*800;
+    return 200 + Math.random()*400;
+  }
+  function scheduleGlitch(){
+    if(ended) return;
+    glitchTimeoutRef = setTimeout(()=>{
+      if(ended) return;
+      triggerGlitch();
+      scheduleGlitch();
+    }, getGlitchDelay());
+  }
+
+  // ---- Séquence finale ----
+  function triggerEndSequence(){
+    if(ended) return;
+    ended = true;
+    if(glitchTimeoutRef) clearTimeout(glitchTimeoutRef);
+
+    let burstCount = 0;
+    const maxBursts = 6;
+    (function burst(){
+      triggerGlitch();
+      burstCount++;
+      if(burstCount < maxBursts){
+        setTimeout(burst, 250 + Math.random()*200);
+      } else {
+        crack.classList.add('stuck');
+        setTimeout(()=>{
+          blackout.classList.add('active');
+          setTimeout(()=> blackout.classList.add('show-content'), 400);
+        }, 600);
+      }
+    })();
+  }
+
+  // ---- Countdown ----
+  function update(){
+    const diff = target - Date.now();
+    if(diff <= 0){
+      countdownEl.style.display = 'none';
+      triggerEndSequence();
+      return;
+    }
+    const days    = Math.floor(diff / (1000*60*60*24));
+    const hours   = Math.floor((diff / (1000*60*60)) % 24);
+    const minutes = Math.floor((diff / (1000*60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    if(days > 0){
+      document.getElementById('daysUnit').style.display = 'flex';
+      document.getElementById('daysSep').style.display = 'block';
+      document.getElementById('days').textContent = pad(days);
+      hoursEl.textContent = pad(hours);
+    } else {
+      hoursEl.textContent = pad(hours);
+    }
+    minutesEl.textContent = pad(minutes);
+    secondsEl.textContent = pad(seconds);
+  }
+
+  // ---- Log d'ambiance ----
+  const logEl = document.getElementById('sysLog');
+  function startLog(){
+    if(!logEl) return;
+    const messages = [
+      "CONNECTING TO MAINFRAME...",
+      "AWAITING WAVE 2 SIGNAL",
+      "INTEGRITY CHECK: OK",
+      "PLAYER SLOTS: STANDBY",
+      "REDLINER CORE: ARMED",
+      "DO NOT DISCONNECT"
+    ];
+    let i = 0;
+    function rotate(){
+      logEl.style.opacity = 0;
+      setTimeout(()=>{
+        logEl.textContent = messages[i % messages.length];
+        logEl.style.opacity = 1;
+        i++;
+      }, 300);
+    }
+    rotate();
+    setInterval(rotate, 3200);
+  }
+
+  // ---- Lecteur audio (ambiance) ----
+  const audioBtn = document.getElementById('audioBtn');
+  const spotifyWrap = document.getElementById('spotifyWrap');
+  if(audioBtn){
+    audioBtn.addEventListener('click', ()=>{
+      const open = spotifyWrap.classList.toggle('open');
+      audioBtn.textContent = open ? '× FERMER L\u2019AMBIANCE' : '\u25B6 LANCER L\u2019AMBIANCE';
+    });
+  }
+
+  // ---- Boot ----
+  update();
+  setInterval(update, 1000);
+  scheduleGlitch();
+  startLog();
+</script>
+</body>
+</html>
