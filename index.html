@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RED LINER — Fan Hub</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --black:#060606;
+    --black-2:#0d0c0d;
+    --red:#e2101f;
+    --red-deep:#7a0a13;
+    --white:#f5f5f0;
+    --grey:#6a6a6a;
+    --grey-d:#3a3a3a;
+    --live:#22dd55;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{
+    scroll-behavior:smooth;
+    scrollbar-width:thin;
+    scrollbar-color:var(--red) rgba(122,10,19,0.15);
+  }
+  ::-webkit-scrollbar{ width:11px; }
+  ::-webkit-scrollbar-track{
+    background:repeating-linear-gradient(0deg,
+      rgba(122,10,19,0.2) 0 2px, rgba(6,6,6,0.6) 2px 4px);
+    border-left:1px solid var(--red-deep);
+  }
+  ::-webkit-scrollbar-thumb{
+    background:linear-gradient(180deg, var(--red), var(--red-deep));
+    border:1px solid #ff2b3a;
+    box-shadow:0 0 8px rgba(226,16,31,0.6);
+  }
+
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'Oswald', sans-serif;
+    overflow-x:hidden;
+    line-height:1.5;
+  }
+
+  /* grain ambiant léger et discret */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none; z-index:100;
+    opacity:0.05;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain .4s steps(3) infinite;
+  }
+  @keyframes grain{
+    0%{transform:translate(0,0)} 33%{transform:translate(-1%,1%)}
+    66%{transform:translate(1%,-1%)} 100%{transform:translate(0,0)}
+  }
+  /* scanlines très subtiles */
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none; z-index:99;
+    background:repeating-linear-gradient(to bottom,
+      rgba(255,255,255,0.015) 0 1px, transparent 1px 3px);
+    opacity:0.4;
+  }
+
+  .wrap{ max-width:1200px; margin:0 auto; padding:0 28px; }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+    background:linear-gradient(180deg, rgba(6,6,6,0.92), rgba(6,6,6,0));
+    backdrop-filter:blur(6px);
+  }
+  .brand{
+    font-weight:700; font-size:20px; letter-spacing:0.08em;
+    text-transform:uppercase; text-decoration:none; color:var(--white);
+  }
+  .brand span{ color:var(--red); }
+  .nav-links{ display:flex; gap:26px; }
+  .nav-links a{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--grey); text-decoration:none; transition:color .2s;
+  }
+  .nav-links a:hover{ color:var(--red); }
+  @media (max-width:680px){ .nav-links{ display:none; } }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center; position:relative;
+    padding:120px 28px 60px;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; top:42%; left:50%;
+    width:120vw; height:60vh;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(ellipse at center,
+      rgba(226,16,31,0.18), transparent 60%);
+    pointer-events:none;
+    animation:halo 6s ease-in-out infinite;
+  }
+  @keyframes halo{ 0%,100%{opacity:0.7} 50%{opacity:1} }
+
+  .vertical-jp{
+    position:absolute; top:50%; left:34px; transform:translateY(-50%);
+    writing-mode:vertical-rl; text-orientation:upright;
+    font-size:13px; letter-spacing:0.35em;
+    color:var(--red); opacity:0.3;
+    z-index:1;
+  }
+  @media (max-width:760px){ .vertical-jp{ display:none; } }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:0.35em; text-transform:uppercase;
+    color:var(--red); margin-bottom:22px;
+    padding:7px 16px; border:1px solid var(--red-deep);
+    position:relative; z-index:2;
+  }
+
+  .hero-title{
+    position:relative; z-index:2;
+    font-size:clamp(64px, 16vw, 200px);
+    font-weight:700; line-height:0.9;
+    letter-spacing:0.02em; text-transform:uppercase;
+    text-shadow:0 0 40px rgba(226,16,31,0.3);
+  }
+  .hero-title span{ color:var(--red); }
+  .hero-title .layer{
+    position:absolute; inset:0;
+    opacity:0; overflow:hidden;
+  }
+  .hero-title.glitch .layer.r{ color:var(--red); opacity:.8; transform:translate(4px,-2px); }
+  .hero-title.glitch .layer.c{ color:#00eaff; opacity:.6; transform:translate(-4px,2px); }
+
+  .hero-sub{
+    position:relative; z-index:2;
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(13px,2vw,17px); letter-spacing:0.12em;
+    color:var(--grey); margin-top:20px; text-transform:uppercase;
+  }
+  .hero-jp{
+    position:relative; z-index:2;
+    margin-top:14px;
+    font-size:clamp(13px,2.4vw,20px);
+    letter-spacing:0.5em;
+    color:var(--red);
+    opacity:0.65;
+    font-weight:300;
+  }
+
+  .cta-row{
+    position:relative; z-index:2;
+    margin-top:40px; display:flex; gap:16px; flex-wrap:wrap; justify-content:center; align-items:center;
+  }
+  .btn.big{
+    font-size:15px; padding:19px 42px; letter-spacing:0.22em;
+  }
+  .btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px; letter-spacing:0.2em; text-transform:uppercase;
+    padding:15px 30px; text-decoration:none;
+    color:var(--white); border:1px solid var(--red-deep);
+    position:relative; overflow:hidden; transition:color .25s, border-color .25s;
+  }
+  .btn::before{
+    content:""; position:absolute; inset:0; left:-100%;
+    background:var(--red); transition:left .3s ease; z-index:-1;
+  }
+  .btn:hover{ color:var(--black); border-color:var(--red); }
+  .btn:hover::before{ left:0; }
+  .btn.primary{
+    border-color:var(--red);
+    background:var(--red);
+    color:var(--black);
+    font-weight:700;
+    box-shadow:0 0 24px rgba(226,16,31,0.45);
+  }
+  .btn.primary::before{ background:var(--white); }
+  .btn.primary:hover{ color:var(--black); border-color:var(--white); }
+  .btn.primary:hover::before{ left:0; }
+
+  .live-stats{
+    position:relative; z-index:2;
+    margin-top:54px;
+    display:flex; gap:0; flex-wrap:wrap; justify-content:center;
+    border:1px solid var(--grey-d);
+  }
+  .live-stats .cell{
+    padding:16px 28px; min-width:120px;
+    border-right:1px solid var(--grey-d);
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+  }
+  .live-stats .cell:last-child{ border-right:none; }
+  .live-stats .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:22px; font-weight:700; color:var(--white);
+  }
+  .live-stats .lab{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey);
+    display:flex; align-items:center; gap:6px;
+  }
+  .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--live); box-shadow:0 0 7px var(--live);
+    animation:blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:.3} }
+  @media (max-width:560px){
+    .live-stats .cell{ min-width:90px; padding:12px 16px; }
+    .live-stats .num{ font-size:17px; }
+  }
+
+  .scroll-hint{
+    position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:0.3em; text-transform:uppercase; color:var(--grey-d);
+    z-index:2;
+    animation:bob 2s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{transform:translate(-50%,0)} 50%{transform:translate(-50%,6px)} }
+
+  /* ---------- SECTIONS ---------- */
+  section.block{ padding:110px 0; position:relative; }
+  .section-head{ margin-bottom:44px; }
+  .section-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:0.3em; color:var(--red);
+  }
+  .jp-accent{
+    color:var(--grey); opacity:0.7; margin-left:8px;
+    letter-spacing:0.2em; font-size:13px;
+  }
+  .section-title{
+    font-size:clamp(32px,5vw,56px); font-weight:600;
+    text-transform:uppercase; letter-spacing:0.02em; margin-top:8px;
+  }
+  .section-title span{ color:var(--red); }
+
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ABOUT */
+  .about-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:start; }
+  .about-text p{ color:#c9c5c2; font-size:17px; margin-bottom:18px; max-width:60ch; }
+  .about-meta{ border-left:2px solid var(--red-deep); padding-left:22px; }
+  .about-meta .row{
+    display:flex; justify-content:space-between; gap:16px;
+    padding:12px 0; border-bottom:1px solid var(--grey-d);
+    font-family:'JetBrains Mono', monospace; font-size:13px;
+  }
+  .about-meta .row .k{ color:var(--grey); letter-spacing:0.1em; text-transform:uppercase; font-size:11px; }
+  .about-meta .row .v{ color:var(--white); }
+  @media (max-width:760px){ .about-grid{ grid-template-columns:1fr; gap:30px; } }
+
+  /* TRAILER */
+  .trailer-frame{
+    position:relative; display:block; width:100%; aspect-ratio:16/9;
+    border:1px solid var(--red-deep);
+    box-shadow:0 0 40px rgba(226,16,31,0.12);
+    overflow:hidden; text-decoration:none;
+    background:var(--black-2);
+  }
+  .trailer-thumb{
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:brightness(0.55) saturate(1.1);
+    transition:filter .4s ease, transform .6s ease;
+  }
+  .trailer-frame:hover .trailer-thumb{ filter:brightness(0.7) saturate(1.2); transform:scale(1.03); }
+  .trailer-play{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:80px; height:80px; border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 30px rgba(226,16,31,0.7);
+    transition:transform .3s ease;
+  }
+  .trailer-play::after{
+    content:""; position:absolute; top:50%; left:54%; transform:translate(-50%,-50%);
+    border-style:solid; border-width:16px 0 16px 26px;
+    border-color:transparent transparent transparent var(--black);
+  }
+  .trailer-frame:hover .trailer-play{ transform:translate(-50%,-50%) scale(1.12); }
+  .trailer-cta{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:16px; text-align:center;
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+    letter-spacing:0.18em; text-transform:uppercase; color:var(--white);
+    background:linear-gradient(180deg, transparent, rgba(6,6,6,0.9));
+  }
+
+  /* GALLERY */
+  .gallery{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+  }
+  .shot{
+    aspect-ratio:16/10; border:1px solid var(--grey-d);
+    background:linear-gradient(135deg, var(--black-2), #1a0508);
+    position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .shot img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease, filter .5s ease; }
+  .shot:hover img{ transform:scale(1.05); filter:saturate(1.2); }
+  .shot .placeholder{
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.2em; color:var(--grey-d); text-transform:uppercase; text-align:center; padding:20px;
+  }
+  .shot::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg, transparent 50%, rgba(6,6,6,0.85));
+  }
+  .shot .author{
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    padding:12px 14px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:0.08em;
+    color:var(--white);
+    display:flex; align-items:center; gap:7px;
+  }
+  .shot .author::before{
+    content:"@"; color:var(--red); font-weight:700;
+  }
+  .shot a.author{ text-decoration:none; }
+  .shot a.author:hover{ color:var(--red); }
+  .gallery-empty{
+    text-align:center; padding:40px;
+    font-family:'JetBrains Mono', monospace; font-size:13px;
+    letter-spacing:0.15em; color:var(--grey); text-transform:uppercase;
+    border:1px dashed var(--grey-d);
+  }
+  @media (max-width:760px){ .gallery{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:460px){ .gallery{ grid-template-columns:1fr; } }
+
+  /* JOIN / CTA final */
+  .join{
+    text-align:center; padding:120px 28px;
+    border-top:1px solid var(--grey-d);
+    background:radial-gradient(ellipse at 50% 0%, rgba(226,16,31,0.1), transparent 60%);
+  }
+  .join h2{ font-size:clamp(36px,6vw,68px); font-weight:700; text-transform:uppercase; }
+  .join h2 span{ color:var(--red); }
+  .join p{ color:var(--grey); font-family:'JetBrains Mono', monospace; font-size:13px; letter-spacing:0.1em; margin:16px 0 34px; }
+
+  /* FOOTER */
+  footer{
+    padding:40px 28px; text-align:center;
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.15em; color:var(--grey-d); text-transform:uppercase;
+  }
+  footer .visitors{ color:var(--grey); margin-bottom:10px; }
+  footer .visitors b{ color:var(--red); }
+  footer .disclaimer{ opacity:0.7; margin-top:10px; }
+
+  /* ---- Lecteur audio sur le côté ---- */
+  .audio-zone{
+    position:fixed; bottom:24px; right:24px; z-index:60;
+    display:flex; flex-direction:column; align-items:flex-end; gap:12px;
+  }
+  .audio-btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--red); background:rgba(6,6,6,0.88);
+    border:1px solid var(--red); padding:11px 20px; cursor:pointer;
+    backdrop-filter:blur(4px); transition:color .25s, background .25s;
+  }
+  .audio-btn:hover{ color:var(--black); background:var(--red); }
+  .spotify-wrap{
+    width:300px; max-width:80vw;
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height .4s ease, opacity .4s ease;
+    background:var(--black); border:0;
+  }
+  .spotify-wrap.open{
+    max-height:172px; opacity:1;
+    border:1px solid var(--red); box-shadow:0 0 18px rgba(226,16,31,0.35);
+  }
+  .spotify-wrap iframe{ width:100%; height:152px; border:0; display:block; }
+  @media (max-width:560px){ .audio-zone{ bottom:14px; right:14px; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#top" class="brand">RED<span>LINER</span></a>
+  <div class="nav-links">
+    <a href="#about" data-i18n="navAbout">Le jeu</a>
+    <a href="#trailer" data-i18n="navTrailer">Trailer</a>
+    <a href="#gallery" data-i18n="navGallery">Galerie</a>
+    <a href="#join" data-i18n="navJoin">Rejoindre</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="vertical-jp" aria-hidden="true">スピード・レース・限界突破</div>
+  <div class="eyebrow" data-i18n="eyebrow">// Fan hub · non-officiel</div>
+  <h1 class="hero-title" id="heroTitle">
+    RED<span>LINER</span>
+    <span class="layer r" aria-hidden="true">REDLINER</span>
+    <span class="layer c" aria-hidden="true">REDLINER</span>
+  </h1>
+  <div class="hero-jp" aria-hidden="true">レッドライナー</div>
+  <div class="hero-sub" data-i18n="heroSub">Le jeu est disponible — rejoins la course</div>
+
+  <div class="cta-row">
+    <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn primary big" data-i18n="play">▶ Jouer maintenant</a>
+    <a href="https://discord.gg/redliner" target="_blank" class="btn" data-i18n="discord">Discord</a>
+  </div>
+
+  <div class="live-stats">
+    <div class="cell"><span class="num" id="statPlaying">—</span><span class="lab"><span class="dot"></span><span data-i18n="statPlaying">en ligne</span></span></div>
+    <div class="cell"><span class="num" id="statLikes">—</span><span class="lab" data-i18n="statLikes">likes</span></div>
+    <div class="cell"><span class="num" id="statVisits">—</span><span class="lab" data-i18n="statVisits">visites</span></div>
+    <div class="cell"><span class="num" id="statFavorites">—</span><span class="lab" data-i18n="statFavorites">favoris</span></div>
+  </div>
+
+  <div class="scroll-hint" data-i18n="scroll">défiler ↓</div>
+</header>
+
+<section class="block" id="about">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">01 — <span data-i18n="navAbout">Le jeu</span> <span class="jp-accent">情報</span></div>
+      <h2 class="section-title" data-i18n="aboutTitle">À propos de <span>RED LINER</span></h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p data-i18n="aboutP1">RED LINER est une expérience Roblox au style affirmé : ambiance sombre, rouge et tranchante. Ce site est un hub réalisé par un fan pour suivre le jeu, ses stats en direct et sa communauté.</p>
+        <p data-i18n="aboutP2">Toutes les infos importantes au même endroit : le lien officiel du jeu, le Discord de la communauté, le trailer et les visuels. Les statistiques affichées proviennent directement de l'API publique Roblox.</p>
+      </div>
+      <div class="about-meta reveal">
+        <div class="row"><span class="k" data-i18n="metaPlatform">Plateforme</span><span class="v">PC / Console</span></div>
+        <div class="row"><span class="k" data-i18n="metaControls">Contrôles</span><span class="v" data-i18n="metaKbm">Clavier-souris</span></div>
+        <div class="row"><span class="k" data-i18n="metaStatus">État</span><span class="v" data-i18n="metaLive">Disponible</span></div>
+        <div class="row"><span class="k" data-i18n="metaPrice">Prix</span><span class="v" data-i18n="metaFree">Gratuit</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="trailer">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">02 — <span data-i18n="navTrailer">Trailer</span> <span class="jp-accent">映像</span></div>
+      <h2 class="section-title" data-i18n="trailerTitle">Regarde le <span>trailer</span></h2>
+    </div>
+    <a class="trailer-frame reveal" href="https://youtu.be/kR3q2EPYiEY" target="_blank" rel="noopener" id="trailerLink">
+      <img class="trailer-thumb" src="https://i.ytimg.com/vi/kR3q2EPYiEY/maxresdefault.jpg" alt="RED LINER trailer"
+        onerror="this.src='https://i.ytimg.com/vi/kR3q2EPYiEY/hqdefault.jpg'">
+      <span class="trailer-play" aria-hidden="true"></span>
+      <span class="trailer-cta" data-i18n="watchTrailer">Regarder le trailer sur YouTube</span>
+    </a>
+  </div>
+</section>
+
+<section class="block" id="gallery">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">03 — <span data-i18n="navGallery">Créations</span> <span class="jp-accent">作品</span></div>
+      <h2 class="section-title" data-i18n="galleryTitle">Créations de la <span>communauté</span></h2>
+    </div>
+    <div class="gallery reveal" id="galleryGrid">
+      <!-- Rempli automatiquement depuis creations.js -->
+    </div>
+    <div class="gallery-empty" id="galleryEmpty" data-i18n="galleryEmpty" style="display:none;">
+      Aucune création pour l'instant — reviens bientôt !
+    </div>
+  </div>
+</section>
+
+<section class="join" id="join">
+  <div class="reveal">
+    <h2 data-i18n="joinTitle">Rejoins la <span>communauté</span></h2>
+    <p data-i18n="joinSub">Le jeu t'attend. Le Discord aussi.</p>
+    <div class="cta-row" style="justify-content:center;">
+      <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn primary" data-i18n="play">▶ Jouer maintenant</a>
+      <a href="https://discord.gg/redliner" target="_blank" class="btn" data-i18n="discord">Discord</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="visitors"><span class="dot" style="background:var(--red); box-shadow:0 0 7px var(--red); display:inline-block; vertical-align:middle; margin-right:6px;"></span><b id="visitorCount">—</b> <span data-i18n="visitors">visiteurs</span></div>
+  <div>RED LINER · Fan Hub</div>
+  <div class="disclaimer" data-i18n="disclaimer">Site de fan non-officiel · non affilié aux créateurs du jeu</div>
+</footer>
+
+<div class="audio-zone">
+  <div class="spotify-wrap" id="spotifyWrap">
+    <iframe id="spotifyFrame"
+      src="https://open.spotify.com/embed/playlist/09edtb5s3VCzdLJMfOFDjQ?utm_source=generator&theme=0"
+      loading="lazy"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  </div>
+  <button class="audio-btn" id="audioBtn">&#9654; <span data-i18n="audioPlay">Ambiance</span></button>
+</div>
+
+<script src="creations.js"></script>
+<script>
+  // ---- Traductions FR / EN ----
+  const I18N = {
+    fr: {
+      navAbout:"Le jeu", navTrailer:"Trailer", navGallery:"Créations", navJoin:"Rejoindre",
+      eyebrow:"// Fan hub · non-officiel",
+      heroSub:"Le jeu est disponible — rejoins la course",
+      play:"▶ Jouer maintenant", discord:"Discord",
+      statPlaying:"en ligne", statLikes:"likes", statVisits:"visites", statFavorites:"favoris",
+      scroll:"défiler ↓",
+      aboutTitle:'À propos de <span>RED LINER</span>',
+      aboutP1:"RED LINER est une expérience Roblox au style affirmé : ambiance sombre, rouge et tranchante. Ce site est un hub réalisé par un fan pour suivre le jeu, ses stats en direct et sa communauté.",
+      aboutP2:"Toutes les infos importantes au même endroit : le lien officiel du jeu, le Discord de la communauté, le trailer et les visuels. Les statistiques affichées proviennent directement de l'API publique Roblox.",
+      metaPlatform:"Plateforme", metaControls:"Contrôles", metaKbm:"Clavier-souris",
+      metaStatus:"État", metaLive:"Disponible", metaPrice:"Prix", metaFree:"Gratuit",
+      trailerTitle:'Regarde le <span>trailer</span>',
+      watchTrailer:"Regarder le trailer sur YouTube",
+      galleryTitle:'Créations de la <span>communauté</span>',
+      galleryEmpty:"Aucune création pour l'instant — reviens bientôt !",
+      joinTitle:'Rejoins la <span>communauté</span>',
+      joinSub:"Le jeu t'attend. Le Discord aussi.",
+      visitors:"visiteurs",
+      audioPlay:"Ambiance", audioClose:"Fermer",
+      disclaimer:"Site de fan non-officiel · non affilié aux créateurs du jeu"
+    },
+    en: {
+      navAbout:"The game", navTrailer:"Trailer", navGallery:"Creations", navJoin:"Join",
+      eyebrow:"// Fan hub · unofficial",
+      heroSub:"The game is live — join the race",
+      play:"▶ Play now", discord:"Discord",
+      statPlaying:"online", statLikes:"likes", statVisits:"visits", statFavorites:"favorites",
+      scroll:"scroll ↓",
+      aboutTitle:'About <span>RED LINER</span>',
+      aboutP1:"RED LINER is a Roblox experience with a bold identity: dark, red and sharp. This site is a fan-made hub to follow the game, its live stats and its community.",
+      aboutP2:"Everything important in one place: the official game link, the community Discord, the trailer and visuals. The stats shown come straight from the public Roblox API.",
+      metaPlatform:"Platform", metaControls:"Controls", metaKbm:"Keyboard & mouse",
+      metaStatus:"Status", metaLive:"Live", metaPrice:"Price", metaFree:"Free",
+      trailerTitle:'Watch the <span>trailer</span>',
+      watchTrailer:"Watch the trailer on YouTube",
+      galleryTitle:'Community <span>creations</span>',
+      galleryEmpty:"No creations yet — check back soon!",
+      joinTitle:'Join the <span>community</span>',
+      joinSub:"The game is waiting. So is the Discord.",
+      visitors:"visitors",
+      audioPlay:"Vibe", audioClose:"Close",
+      disclaimer:"Unofficial fan site · not affiliated with the game's creators"
+    },
+    es: {
+      navAbout:"El juego", navTrailer:"Tráiler", navGallery:"Creaciones", navJoin:"Unirse",
+      eyebrow:"// Hub de fans · no oficial",
+      heroSub:"El juego ya está disponible — únete a la carrera",
+      play:"▶ Jugar ahora", discord:"Discord",
+      statPlaying:"en línea", statLikes:"me gusta", statVisits:"visitas", statFavorites:"favoritos",
+      scroll:"desplázate ↓",
+      aboutTitle:'Acerca de <span>RED LINER</span>',
+      aboutP1:"RED LINER es una experiencia de Roblox con una identidad marcada: oscura, roja y afilada. Este sitio es un hub creado por un fan para seguir el juego, sus estadísticas en vivo y su comunidad.",
+      aboutP2:"Todo lo importante en un solo lugar: el enlace oficial del juego, el Discord de la comunidad, el tráiler y las imágenes. Las estadísticas provienen directamente de la API pública de Roblox.",
+      metaPlatform:"Plataforma", metaControls:"Controles", metaKbm:"Teclado y ratón",
+      metaStatus:"Estado", metaLive:"Disponible", metaPrice:"Precio", metaFree:"Gratis",
+      trailerTitle:'Mira el <span>tráiler</span>',
+      watchTrailer:"Ver el tráiler en YouTube",
+      galleryTitle:'Creaciones de la <span>comunidad</span>',
+      galleryEmpty:"Aún no hay creaciones — ¡vuelve pronto!",
+      joinTitle:'Únete a la <span>comunidad</span>',
+      joinSub:"El juego te espera. El Discord también.",
+      visitors:"visitantes",
+      audioPlay:"Ambiente", audioClose:"Cerrar",
+      disclaimer:"Sitio de fans no oficial · sin afiliación con los creadores del juego"
+    },
+    pt: {
+      navAbout:"O jogo", navTrailer:"Trailer", navGallery:"Criações", navJoin:"Entrar",
+      eyebrow:"// Hub de fãs · não oficial",
+      heroSub:"O jogo já está disponível — entre na corrida",
+      play:"▶ Jogar agora", discord:"Discord",
+      statPlaying:"online", statLikes:"curtidas", statVisits:"visitas", statFavorites:"favoritos",
+      scroll:"role ↓",
+      aboutTitle:'Sobre <span>RED LINER</span>',
+      aboutP1:"RED LINER é uma experiência do Roblox com uma identidade marcante: escura, vermelha e afiada. Este site é um hub feito por um fã para acompanhar o jogo, suas estatísticas ao vivo e sua comunidade.",
+      aboutP2:"Tudo o que importa em um só lugar: o link oficial do jogo, o Discord da comunidade, o trailer e as imagens. As estatísticas vêm diretamente da API pública do Roblox.",
+      metaPlatform:"Plataforma", metaControls:"Controles", metaKbm:"Teclado e mouse",
+      metaStatus:"Status", metaLive:"Disponível", metaPrice:"Preço", metaFree:"Grátis",
+      trailerTitle:'Assista ao <span>trailer</span>',
+      watchTrailer:"Assistir ao trailer no YouTube",
+      galleryTitle:'Criações da <span>comunidade</span>',
+      galleryEmpty:"Ainda não há criações — volte em breve!",
+      joinTitle:'Entre na <span>comunidade</span>',
+      joinSub:"O jogo te espera. O Discord também.",
+      visitors:"visitantes",
+      audioPlay:"Ambiente", audioClose:"Fechar",
+      disclaimer:"Site de fãs não oficial · sem afiliação com os criadores do jogo"
+    },
+    de: {
+      navAbout:"Das Spiel", navTrailer:"Trailer", navGallery:"Kreationen", navJoin:"Beitreten",
+      eyebrow:"// Fan-Hub · inoffiziell",
+      heroSub:"Das Spiel ist live — steig ins Rennen ein",
+      play:"▶ Jetzt spielen", discord:"Discord",
+      statPlaying:"online", statLikes:"Likes", statVisits:"Besuche", statFavorites:"Favoriten",
+      scroll:"scrollen ↓",
+      aboutTitle:'Über <span>RED LINER</span>',
+      aboutP1:"RED LINER ist ein Roblox-Erlebnis mit einer klaren Identität: dunkel, rot und scharf. Diese Seite ist ein von einem Fan erstellter Hub, um das Spiel, seine Live-Statistiken und seine Community zu verfolgen.",
+      aboutP2:"Alles Wichtige an einem Ort: der offizielle Spiel-Link, der Community-Discord, der Trailer und die Bilder. Die angezeigten Statistiken stammen direkt aus der öffentlichen Roblox-API.",
+      metaPlatform:"Plattform", metaControls:"Steuerung", metaKbm:"Tastatur & Maus",
+      metaStatus:"Status", metaLive:"Verfügbar", metaPrice:"Preis", metaFree:"Kostenlos",
+      trailerTitle:'Sieh dir den <span>Trailer</span> an',
+      watchTrailer:"Trailer auf YouTube ansehen",
+      galleryTitle:'Kreationen der <span>Community</span>',
+      galleryEmpty:"Noch keine Kreationen — schau bald wieder vorbei!",
+      joinTitle:'Tritt der <span>Community</span> bei',
+      joinSub:"Das Spiel wartet. Der Discord auch.",
+      visitors:"Besucher",
+      audioPlay:"Ambiente", audioClose:"Schließen",
+      disclaimer:"Inoffizielle Fanseite · nicht mit den Spiel-Machern verbunden"
+    },
+    it: {
+      navAbout:"Il gioco", navTrailer:"Trailer", navGallery:"Creazioni", navJoin:"Unisciti",
+      eyebrow:"// Hub per fan · non ufficiale",
+      heroSub:"Il gioco è disponibile — entra nella corsa",
+      play:"▶ Gioca ora", discord:"Discord",
+      statPlaying:"online", statLikes:"mi piace", statVisits:"visite", statFavorites:"preferiti",
+      scroll:"scorri ↓",
+      aboutTitle:'Informazioni su <span>RED LINER</span>',
+      aboutP1:"RED LINER è un'esperienza Roblox dall'identità forte: cupa, rossa e tagliente. Questo sito è un hub creato da un fan per seguire il gioco, le sue statistiche in tempo reale e la sua community.",
+      aboutP2:"Tutto ciò che conta in un solo posto: il link ufficiale del gioco, il Discord della community, il trailer e le immagini. Le statistiche provengono direttamente dall'API pubblica di Roblox.",
+      metaPlatform:"Piattaforma", metaControls:"Controlli", metaKbm:"Tastiera e mouse",
+      metaStatus:"Stato", metaLive:"Disponibile", metaPrice:"Prezzo", metaFree:"Gratis",
+      trailerTitle:'Guarda il <span>trailer</span>',
+      watchTrailer:"Guarda il trailer su YouTube",
+      galleryTitle:'Creazioni della <span>community</span>',
+      galleryEmpty:"Ancora nessuna creazione — torna presto!",
+      joinTitle:'Unisciti alla <span>community</span>',
+      joinSub:"Il gioco ti aspetta. Anche il Discord.",
+      visitors:"visitatori",
+      audioPlay:"Atmosfera", audioClose:"Chiudi",
+      disclaimer:"Sito per fan non ufficiale · non affiliato ai creatori del gioco"
+    },
+    ja: {
+      navAbout:"ゲーム", navTrailer:"トレーラー", navGallery:"作品", navJoin:"参加",
+      eyebrow:"// ファンハブ · 非公式",
+      heroSub:"ゲーム配信中 — レースに参加しよう",
+      play:"▶ 今すぐプレイ", discord:"Discord",
+      statPlaying:"オンライン", statLikes:"いいね", statVisits:"訪問数", statFavorites:"お気に入り",
+      scroll:"スクロール ↓",
+      aboutTitle:'<span>RED LINER</span> について',
+      aboutP1:"RED LINER は、ダークで赤く鋭い独自の世界観を持つ Roblox 体験です。このサイトは、ゲーム・ライブ統計・コミュニティを追うためにファンが作ったハブです。",
+      aboutP2:"大切な情報をひとつの場所に。公式ゲームリンク、コミュニティ Discord、トレーラー、ビジュアル。表示される統計は Roblox 公式 API から直接取得しています。",
+      metaPlatform:"プラットフォーム", metaControls:"操作", metaKbm:"キーボード＆マウス",
+      metaStatus:"状態", metaLive:"配信中", metaPrice:"価格", metaFree:"無料",
+      trailerTitle:'<span>トレーラー</span>を見る',
+      watchTrailer:"YouTube でトレーラーを見る",
+      galleryTitle:'<span>コミュニティ</span>の作品',
+      galleryEmpty:"まだ作品がありません — またチェックしてね！",
+      joinTitle:'<span>コミュニティ</span>に参加',
+      joinSub:"ゲームが待っている。Discord も。",
+      visitors:"訪問者",
+      audioPlay:"BGM", audioClose:"閉じる",
+      disclaimer:"非公式ファンサイト · ゲーム制作者とは無関係です"
+    },
+    ko: {
+      navAbout:"게임", navTrailer:"트레일러", navGallery:"작품", navJoin:"참여",
+      eyebrow:"// 팬 허브 · 비공식",
+      heroSub:"게임 출시 — 레이스에 참여하세요",
+      play:"▶ 지금 플레이", discord:"Discord",
+      statPlaying:"온라인", statLikes:"좋아요", statVisits:"방문수", statFavorites:"즐겨찾기",
+      scroll:"스크롤 ↓",
+      aboutTitle:'<span>RED LINER</span> 소개',
+      aboutP1:"RED LINER는 어둡고 붉으며 날카로운 독자적인 분위기를 가진 Roblox 경험입니다. 이 사이트는 게임과 실시간 통계, 커뮤니티를 따라가기 위해 팬이 만든 허브입니다.",
+      aboutP2:"중요한 정보를 한곳에. 공식 게임 링크, 커뮤니티 Discord, 트레일러, 비주얼. 표시되는 통계는 Roblox 공개 API에서 직접 가져옵니다.",
+      metaPlatform:"플랫폼", metaControls:"조작", metaKbm:"키보드 & 마우스",
+      metaStatus:"상태", metaLive:"출시됨", metaPrice:"가격", metaFree:"무료",
+      trailerTitle:'<span>트레일러</span> 보기',
+      watchTrailer:"YouTube에서 트레일러 보기",
+      galleryTitle:'<span>커뮤니티</span> 작품',
+      galleryEmpty:"아직 작품이 없습니다 — 곧 다시 확인해 주세요!",
+      joinTitle:'<span>커뮤니티</span>에 참여',
+      joinSub:"게임이 기다립니다. Discord도요.",
+      visitors:"방문자",
+      audioPlay:"BGM", audioClose:"닫기",
+      disclaimer:"비공식 팬 사이트 · 게임 제작자와 무관합니다"
+    },
+    zh: {
+      navAbout:"游戏", navTrailer:"预告片", navGallery:"作品", navJoin:"加入",
+      eyebrow:"// 粉丝中心 · 非官方",
+      heroSub:"游戏已上线 — 加入竞速",
+      play:"▶ 立即游玩", discord:"Discord",
+      statPlaying:"在线", statLikes:"点赞", statVisits:"访问量", statFavorites:"收藏",
+      scroll:"滚动 ↓",
+      aboutTitle:'关于 <span>RED LINER</span>',
+      aboutP1:"RED LINER 是一款风格鲜明的 Roblox 体验：暗黑、赤红、锐利。本站是一名粉丝制作的中心，用于追踪游戏、实时数据和社区。",
+      aboutP2:"重要信息一站式集合：官方游戏链接、社区 Discord、预告片和视觉素材。所显示的数据直接来自 Roblox 公开 API。",
+      metaPlatform:"平台", metaControls:"操作", metaKbm:"键盘和鼠标",
+      metaStatus:"状态", metaLive:"已上线", metaPrice:"价格", metaFree:"免费",
+      trailerTitle:'观看<span>预告片</span>',
+      watchTrailer:"在 YouTube 观看预告片",
+      galleryTitle:'<span>社区</span>作品',
+      galleryEmpty:"暂无作品 — 敬请期待！",
+      joinTitle:'加入<span>社区</span>',
+      joinSub:"游戏在等你。Discord 也是。",
+      visitors:"访客",
+      audioPlay:"音乐", audioClose:"关闭",
+      disclaimer:"非官方粉丝网站 · 与游戏创作者无关"
+    },
+    ru: {
+      navAbout:"Игра", navTrailer:"Трейлер", navGallery:"Работы", navJoin:"Вступить",
+      eyebrow:"// Фан-хаб · неофициальный",
+      heroSub:"Игра доступна — присоединяйся к гонке",
+      play:"▶ Играть сейчас", discord:"Discord",
+      statPlaying:"в сети", statLikes:"лайки", statVisits:"посещения", statFavorites:"избранное",
+      scroll:"листай ↓",
+      aboutTitle:'О <span>RED LINER</span>',
+      aboutP1:"RED LINER — это опыт в Roblox с выразительным стилем: тёмный, красный и резкий. Этот сайт — хаб, созданный фанатом, чтобы следить за игрой, её статистикой в реальном времени и сообществом.",
+      aboutP2:"Всё важное в одном месте: официальная ссылка на игру, Discord сообщества, трейлер и визуалы. Показанная статистика берётся напрямую из публичного API Roblox.",
+      metaPlatform:"Платформа", metaControls:"Управление", metaKbm:"Клавиатура и мышь",
+      metaStatus:"Статус", metaLive:"Доступно", metaPrice:"Цена", metaFree:"Бесплатно",
+      trailerTitle:'Смотри <span>трейлер</span>',
+      watchTrailer:"Смотреть трейлер на YouTube",
+      galleryTitle:'Работы <span>сообщества</span>',
+      galleryEmpty:"Пока нет работ — загляни позже!",
+      joinTitle:'Вступай в <span>сообщество</span>',
+      joinSub:"Игра ждёт. И Discord тоже.",
+      visitors:"посетителей",
+      audioPlay:"Атмосфера", audioClose:"Закрыть",
+      disclaimer:"Неофициальный фан-сайт · не связан с создателями игры"
+    }
+  };
+  // Détecte la langue du navigateur (code 2 lettres). Défaut : anglais.
+  const code = (navigator.language || navigator.userLanguage || 'en').toLowerCase().slice(0,2);
+  const LANG = I18N[code] ? code : 'en';
+  const T = I18N[LANG];
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(T[k] !== undefined) el.innerHTML = T[k];
+  });
+
+  // ---- Glitch subtil sur le titre (rare, propre) ----
+  const heroTitle = document.getElementById('heroTitle');
+  function glitchOnce(){
+    heroTitle.classList.add('glitch');
+    setTimeout(()=> heroTitle.classList.remove('glitch'), 140);
+  }
+  function scheduleGlitch(){
+    setTimeout(()=>{ glitchOnce(); scheduleGlitch(); }, 3500 + Math.random()*4500);
+  }
+  scheduleGlitch();
+
+  // ---- Galerie des créations (depuis creations.js) ----
+  function renderGallery(){
+    const grid = document.getElementById('galleryGrid');
+    const empty = document.getElementById('galleryEmpty');
+    if(!grid) return;
+    const list = (typeof CREATIONS !== 'undefined' && Array.isArray(CREATIONS)) ? CREATIONS : [];
+    grid.innerHTML = "";
+    if(list.length === 0){
+      if(empty) empty.style.display = 'block';
+      return;
+    }
+    list.forEach(c=>{
+      const shot = document.createElement('div');
+      shot.className = 'shot';
+      const img = document.createElement('img');
+      img.src = c.image || "";
+      img.alt = (c.author ? "Création de " + c.author : "Création");
+      img.loading = "lazy";
+      shot.appendChild(img);
+      if(c.author){
+        let author;
+        if(c.link){
+          author = document.createElement('a');
+          author.className = 'author';
+          author.href = c.link;
+          author.target = "_blank";
+          author.rel = "noopener";
+        } else {
+          author = document.createElement('span');
+          author.className = 'author';
+        }
+        author.appendChild(document.createTextNode(c.author));
+        shot.appendChild(author);
+      }
+      grid.appendChild(shot);
+    });
+  }
+  renderGallery();
+
+  // ---- Lecteur audio (ambiance) ----
+  const audioBtn = document.getElementById('audioBtn');
+  const spotifyWrap = document.getElementById('spotifyWrap');
+  if(audioBtn && spotifyWrap){
+    audioBtn.addEventListener('click', ()=>{
+      const open = spotifyWrap.classList.toggle('open');
+      audioBtn.innerHTML = open
+        ? '\u00D7 <span>' + T.audioClose + '</span>'
+        : '\u25B6 <span>' + T.audioPlay + '</span>';
+    });
+  }
+
+  // ---- Reveal au scroll ----
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.15 });
+  document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+</script>
+<script src="counter.js"></script>
+<script src="roblox-stats.js"></script>
+</body>
+</html>
