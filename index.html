@@ -647,16 +647,16 @@
 <div class="blackout" id="blackout">
   <div class="blackout-content">
     <h2>RED<span>LINER</span></h2>
-    <div class="subtitle" style="margin-top:10px; margin-bottom:0;">C'est <span class="hr">disponible maintenant</span></div>
+    <div class="subtitle" style="margin-top:10px; margin-bottom:0;" data-i18n="availableNow">C'est <span class="hr">disponible maintenant</span></div>
     <div class="blackout-links">
-      <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn btn-primary">Jouer maintenant</a>
+      <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn btn-primary" data-i18n="playNow">Jouer maintenant</a>
       <a href="https://discord.gg/redliner" target="_blank" class="btn">Discord</a>
     </div>
   </div>
 </div>
 
 <main>
-  <div class="eyebrow">// Release Sequence Engaged</div>
+  <div class="eyebrow" data-i18n="eyebrow">// Release Sequence Engaged</div>
 
   <div class="titlewrap">
     <h1 class="base">RED<span>LINER</span></h1>
@@ -664,27 +664,27 @@
     <h1 class="glitchLayer cyan" aria-hidden="true">RED<span>LINER</span></h1>
   </div>
 
-  <div class="subtitle">Le compte à rebours a commencé</div>
+  <div class="subtitle" data-i18n="countdownStarted">Le compte à rebours a commencé</div>
 
   <div class="countdown" id="countdown">
-    <div class="unit" id="daysUnit" style="display:none;"><div class="value" id="days">00</div><div class="label">Jours</div></div>
+    <div class="unit" id="daysUnit" style="display:none;"><div class="value" id="days">00</div><div class="label" data-i18n="days">Jours</div></div>
     <div class="separator" id="daysSep" style="display:none;">:</div>
-    <div class="unit"><div class="value" id="hours">00</div><div class="label">Heures</div></div>
+    <div class="unit"><div class="value" id="hours">00</div><div class="label" data-i18n="hours">Heures</div></div>
     <div class="separator">:</div>
-    <div class="unit"><div class="value" id="minutes">00</div><div class="label">Minutes</div></div>
+    <div class="unit"><div class="value" id="minutes">00</div><div class="label" data-i18n="minutes">Minutes</div></div>
     <div class="separator">:</div>
-    <div class="unit"><div class="value" id="seconds">00</div><div class="label">Secondes</div></div>
+    <div class="unit"><div class="value" id="seconds">00</div><div class="label" data-i18n="seconds">Secondes</div></div>
   </div>
 
-  <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="live" id="liveBtn">→ Jouer maintenant</a>
+  <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="live" id="liveBtn" data-i18n="playNowArrow">→ Jouer maintenant</a>
 
   <div class="links">
-    <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn btn-primary">Page du jeu</a>
-    <a href="https://youtu.be/kR3q2EPYiEY" target="_blank" class="btn">Trailer</a>
+    <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn btn-primary" data-i18n="gamePage">Page du jeu</a>
+    <a href="https://youtu.be/kR3q2EPYiEY" target="_blank" class="btn" data-i18n="trailer">Trailer</a>
   </div>
 
   <footer>
-    PC / Console — KBM only at launch
+    <span data-i18n="footer">PC / Console — KBM only at launch</span>
     <div id="sysLog" style="margin-top:14px; color:var(--red); opacity:0.8; transition:opacity 0.3s; font-size:10px;"></div>
   </footer>
 </main>
@@ -693,6 +693,65 @@
   // ---- Configuration ----
   // Cible : 13 juin 2026, 22:00 heure de Paris (CEST = UTC+2) => 20:00 UTC
   const target = new Date("2026-06-13T20:00:00Z").getTime();
+
+  // ---- Traductions (FR par défaut, EN sinon) ----
+  const I18N = {
+    fr: {
+      eyebrow: "// Séquence de lancement engagée",
+      countdownStarted: "Le compte à rebours a commencé",
+      days: "Jours", hours: "Heures", minutes: "Minutes", seconds: "Secondes",
+      playNowArrow: "→ Jouer maintenant",
+      gamePage: "Page du jeu",
+      trailer: "Trailer",
+      footer: "PC / Console — clavier-souris uniquement au lancement",
+      availableNow: "C'est <span class=\"hr\">disponible maintenant</span>",
+      playNow: "Jouer maintenant",
+      audioPlay: "\u25B6 LANCER L\u2019AMBIANCE",
+      audioClose: "\u00D7 FERMER L\u2019AMBIANCE",
+      log: [
+        "CONNEXION AU SERVEUR...",
+        "EN ATTENTE DU SIGNAL",
+        "VÉRIFICATION INTÉGRITÉ : OK",
+        "PLACES JOUEURS : EN ATTENTE",
+        "NOYAU REDLINER : ARMÉ",
+        "NE PAS SE DÉCONNECTER"
+      ]
+    },
+    en: {
+      eyebrow: "// Launch sequence engaged",
+      countdownStarted: "The countdown has begun",
+      days: "Days", hours: "Hours", minutes: "Minutes", seconds: "Seconds",
+      playNowArrow: "→ Play now",
+      gamePage: "Game page",
+      trailer: "Trailer",
+      footer: "PC / Console — KBM only at launch",
+      availableNow: "It's <span class=\"hr\">available now</span>",
+      playNow: "Play now",
+      audioPlay: "\u25B6 START THE VIBE",
+      audioClose: "\u00D7 CLOSE THE VIBE",
+      log: [
+        "CONNECTING TO MAINFRAME...",
+        "AWAITING SIGNAL",
+        "INTEGRITY CHECK: OK",
+        "PLAYER SLOTS: STANDBY",
+        "REDLINER CORE: ARMED",
+        "DO NOT DISCONNECT"
+      ]
+    }
+  };
+
+  // Détecte la langue du navigateur : français => fr, tout le reste => en
+  const LANG = (navigator.language || navigator.userLanguage || 'en').toLowerCase().startsWith('fr') ? 'fr' : 'en';
+  const T = I18N[LANG];
+  document.documentElement.lang = LANG;
+
+  // Applique les traductions sur tous les éléments [data-i18n]
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(T[key] !== undefined){
+      el.innerHTML = T[key];
+    }
+  });
 
   // ---- Références DOM (déclarées AVANT tout appel) ----
   const hoursEl     = document.getElementById('hours');
@@ -802,14 +861,7 @@
   const logEl = document.getElementById('sysLog');
   function startLog(){
     if(!logEl) return;
-    const messages = [
-      "CONNECTING TO MAINFRAME...",
-      "AWAITING WAVE 2 SIGNAL",
-      "INTEGRITY CHECK: OK",
-      "PLAYER SLOTS: STANDBY",
-      "REDLINER CORE: ARMED",
-      "DO NOT DISCONNECT"
-    ];
+    const messages = T.log;
     let i = 0;
     function rotate(){
       logEl.style.opacity = 0;
@@ -827,9 +879,10 @@
   const audioBtn = document.getElementById('audioBtn');
   const spotifyWrap = document.getElementById('spotifyWrap');
   if(audioBtn){
+    audioBtn.innerHTML = T.audioPlay;
     audioBtn.addEventListener('click', ()=>{
       const open = spotifyWrap.classList.toggle('open');
-      audioBtn.textContent = open ? '× FERMER L\u2019AMBIANCE' : '\u25B6 LANCER L\u2019AMBIANCE';
+      audioBtn.innerHTML = open ? T.audioClose : T.audioPlay;
     });
   }
 
