@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RED LINER — Mise à jour</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23060606'/%3E%3Cpath d='M6 22 L20 6 L24 6 L10 22 Z' fill='%23e2101f'/%3E%3Crect x='6' y='24' width='20' height='3' fill='%23e2101f'/%3E%3C/svg%3E">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+  :root{ --black:#060606; --red:#e2101f; --red-deep:#7a0a13; --white:#f5f5f0; --grey:#6a6a6a; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--black); color:var(--white);
+    font-family:'Oswald',sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:24px; overflow:hidden;
+  }
+  /* grain + scanlines */
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:2;
+    opacity:0.06; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  body::after{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:1;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.02) 0 1px, transparent 1px 3px);
+    opacity:0.5;
+  }
+  .halo{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:120vw; height:50vh;
+    background:radial-gradient(ellipse at center, rgba(226,16,31,0.16), transparent 60%);
+    animation:halo 5s ease-in-out infinite; pointer-events:none;
+  }
+  @keyframes halo{ 0%,100%{opacity:.7} 50%{opacity:1} }
+  .wrap{ position:relative; z-index:3; }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.35em;
+    text-transform:uppercase; color:var(--red); margin-bottom:24px;
+    border-top:1px solid var(--red-deep); border-bottom:1px solid var(--red-deep);
+    padding:7px 0; display:inline-block;
+  }
+  h1{
+    font-size:clamp(40px,9vw,110px); font-weight:700; line-height:0.95;
+    text-transform:uppercase; letter-spacing:0.02em;
+    text-shadow:0 0 30px rgba(226,16,31,0.35);
+  }
+  h1 span{ color:var(--red); }
+  .status{
+    margin-top:24px; font-family:'JetBrains Mono',monospace;
+    font-size:clamp(13px,2vw,17px); letter-spacing:0.15em;
+    text-transform:uppercase; color:var(--grey);
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .dot{
+    width:9px;height:9px;border-radius:50%;background:var(--red);
+    box-shadow:0 0 8px var(--red); animation:blink 1.2s steps(1) infinite;
+  }
+  @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0.2}}
+  .bar{
+    margin:40px auto 0; width:min(420px,80vw); height:4px;
+    background:rgba(122,10,19,0.3); overflow:hidden; position:relative;
+  }
+  .bar::after{
+    content:""; position:absolute; top:0; left:-40%; width:40%; height:100%;
+    background:linear-gradient(90deg,transparent,var(--red),transparent);
+    animation:load 1.6s ease-in-out infinite;
+  }
+  @keyframes load{ 0%{left:-40%} 100%{left:100%} }
+  .jp{ margin-top:22px; font-size:14px; letter-spacing:0.5em; color:var(--red); opacity:0.55; }
+  .note{
+    margin-top:46px; font-family:'JetBrains Mono',monospace; font-size:11px;
+    letter-spacing:0.1em; color:var(--grey); opacity:0.7;
+  }
+  .note a{ color:var(--red); text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="halo"></div>
+<div class="wrap">
+  <div class="eyebrow" id="eyebrow">// Maintenance en cours</div>
+  <h1>RED<span>LINER</span></h1>
+  <div class="status"><span class="dot"></span><span id="statusText">Mise à jour en cours</span></div>
+  <div class="bar"></div>
+  <div class="jp">レッドライナー</div>
+  <div class="note" id="note">Le site revient très vite. En attendant, rejoins le <a href="https://discord.gg/redliner" target="_blank">Discord</a>.</div>
+</div>
+
+<script>
+  // Traduction simple FR/EN selon le navigateur
+  const fr = (navigator.language||'en').toLowerCase().startsWith('fr');
+  if(!fr){
+    document.documentElement.lang = 'en';
+    document.getElementById('eyebrow').textContent = '// Maintenance in progress';
+    document.getElementById('statusText').textContent = 'Update in progress';
+    document.getElementById('note').innerHTML = 'The site will be back very soon. In the meantime, join the <a href="https://discord.gg/redliner" target="_blank">Discord</a>.';
+  }
+</script>
+</body>
+</html>
