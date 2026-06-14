@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RED LINER — Fan Hub</title>
+<meta name="description" content="Fan hub for RED LINER, a Hyper FPS on Roblox. Live stats, arsenal, mechanics, trailer, guides and community creations.">
+
+<!-- Favicon (rouge/noir inline) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23060606'/%3E%3Cpath d='M6 22 L20 6 L24 6 L10 22 Z' fill='%23e2101f'/%3E%3Crect x='6' y='24' width='20' height='3' fill='%23e2101f'/%3E%3C/svg%3E">
+
+<!-- Open Graph (aperçu Discord / réseaux) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RED LINER · Fan Hub">
+<meta property="og:title" content="RED LINER — Fan Hub">
+<meta property="og:description" content="Hyper FPS sur Roblox · Stats en direct, arsenal, mécaniques, guides et créations de la communauté.">
+<meta property="og:url" content="https://louvitox.github.io/redliner/">
+<meta property="og:image" content="https://louvitox.github.io/redliner/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RED LINER — Fan Hub">
+<meta name="twitter:description" content="Hyper FPS sur Roblox · Stats en direct, arsenal, guides et créations de la communauté.">
+<meta name="twitter:image" content="https://louvitox.github.io/redliner/og.png">
+<meta name="theme-color" content="#e2101f">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --black:#060606;
+    --black-2:#0d0c0d;
+    --red:#e2101f;
+    --red-deep:#7a0a13;
+    --white:#f5f5f0;
+    --grey:#6a6a6a;
+    --grey-d:#3a3a3a;
+    --live:#22dd55;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{
+    scroll-behavior:smooth;
+    scrollbar-width:thin;
+    scrollbar-color:var(--red) rgba(122,10,19,0.15);
+  }
+  ::-webkit-scrollbar{ width:11px; }
+  ::-webkit-scrollbar-track{
+    background:repeating-linear-gradient(0deg,
+      rgba(122,10,19,0.2) 0 2px, rgba(6,6,6,0.6) 2px 4px);
+    border-left:1px solid var(--red-deep);
+  }
+  ::-webkit-scrollbar-thumb{
+    background:linear-gradient(180deg, var(--red), var(--red-deep));
+    border:1px solid #ff2b3a;
+    box-shadow:0 0 8px rgba(226,16,31,0.6);
+  }
+
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'Oswald', sans-serif;
+    overflow-x:hidden;
+    line-height:1.5;
+  }
+
+  /* ===================== INTRO KATANA ===================== */
+  .intro{
+    position:fixed; inset:0; z-index:9999;
+    background:var(--black);
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .intro.done{
+    animation:introOut .6s ease forwards;
+    pointer-events:none;
+  }
+  @keyframes introOut{ to{ opacity:0; visibility:hidden; } }
+
+  .intro-stage{
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .intro-title{
+    position:relative;
+    font-size:clamp(48px,12vw,150px);
+    font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
+    line-height:0.9;
+  }
+  .intro-title b{ color:var(--red); font-weight:700; }
+
+  /* deux moitiés superposées, coupées en diagonale */
+  .intro-title .half{
+    display:block; position:relative;
+  }
+  .intro-title .half.top{
+    /* moitié haute (coupe diagonale façon lame) */
+    clip-path:polygon(0 0, 100% 0, 100% 42%, 0 58%);
+  }
+  .intro-title .half.bottom{
+    position:absolute; inset:0;
+    clip-path:polygon(0 58%, 100% 42%, 100% 100%, 0 100%);
+  }
+  /* écartement des deux moitiés après le slash */
+  .intro.cut .half.top{
+    animation:halfTop .9s cubic-bezier(.6,0,.2,1) forwards;
+  }
+  .intro.cut .half.bottom{
+    animation:halfBottom .9s cubic-bezier(.6,0,.2,1) forwards;
+  }
+  @keyframes halfTop{
+    0%{ transform:translate(0,0) rotate(0); }
+    100%{ transform:translate(-60px,-50px) rotate(-3deg); opacity:0; }
+  }
+  @keyframes halfBottom{
+    0%{ transform:translate(0,0) rotate(0); }
+    100%{ transform:translate(60px,50px) rotate(-3deg); opacity:0; }
+  }
+
+  /* le trait du katana qui traverse */
+  .slash{
+    position:absolute; top:50%; left:-20%;
+    width:140%; height:3px;
+    background:linear-gradient(90deg, transparent, #fff 40%, #fff 60%, transparent);
+    box-shadow:0 0 14px #fff, 0 0 30px var(--red);
+    transform:translateY(-50%) rotate(-8deg) scaleX(0);
+    transform-origin:left center;
+    opacity:0;
+  }
+  .intro.cut .slash{
+    animation:slashGo .32s ease-out forwards;
+  }
+  @keyframes slashGo{
+    0%{ transform:translateY(-50%) rotate(-8deg) scaleX(0); opacity:0; left:-20%; }
+    20%{ opacity:1; }
+    100%{ transform:translateY(-50%) rotate(-8deg) scaleX(1); opacity:0; left:0%; }
+  }
+
+  .intro-jp{
+    position:absolute; bottom:18%;
+    font-size:clamp(12px,2vw,18px); letter-spacing:0.6em;
+    color:var(--red); opacity:0;
+    animation:jpIn .8s ease .15s forwards;
+  }
+  @keyframes jpIn{ to{ opacity:0.6; } }
+
+  /* flash blanc à l'impact */
+  .intro::after{
+    content:""; position:absolute; inset:0;
+    background:#fff; opacity:0; pointer-events:none;
+  }
+  .intro.cut::after{
+    animation:flash .3s ease-out .28s;
+  }
+  @keyframes flash{
+    0%{opacity:0} 30%{opacity:.5} 100%{opacity:0}
+  }
+  /* ===================== /INTRO ===================== */
+
+
+  /* grain ambiant léger et discret */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none; z-index:100;
+    opacity:0.05;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain .4s steps(3) infinite;
+  }
+  @keyframes grain{
+    0%{transform:translate(0,0)} 33%{transform:translate(-1%,1%)}
+    66%{transform:translate(1%,-1%)} 100%{transform:translate(0,0)}
+  }
+  /* scanlines très subtiles */
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none; z-index:99;
+    background:repeating-linear-gradient(to bottom,
+      rgba(255,255,255,0.015) 0 1px, transparent 1px 3px);
+    opacity:0.4;
+  }
+
+  .wrap{ max-width:1200px; margin:0 auto; padding:0 28px; }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+    background:linear-gradient(180deg, rgba(6,6,6,0.92), rgba(6,6,6,0));
+    backdrop-filter:blur(6px);
+  }
+  .brand{
+    font-weight:700; font-size:20px; letter-spacing:0.08em;
+    text-transform:uppercase; text-decoration:none; color:var(--white);
+  }
+  .brand span{ color:var(--red); }
+  .nav-links{ display:flex; gap:26px; }
+  .nav-links a{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--grey); text-decoration:none; transition:color .2s;
+  }
+  .nav-links a:hover{ color:var(--red); }
+  @media (max-width:680px){ .nav-links{ display:none; } }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center; position:relative;
+    padding:120px 28px 60px;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; top:42%; left:50%;
+    width:120vw; height:60vh;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(ellipse at center,
+      rgba(226,16,31,0.18), transparent 60%);
+    pointer-events:none;
+    animation:halo 6s ease-in-out infinite;
+  }
+  @keyframes halo{ 0%,100%{opacity:0.7} 50%{opacity:1} }
+
+  .vertical-jp{
+    position:absolute; top:50%; left:34px; transform:translateY(-50%);
+    writing-mode:vertical-rl; text-orientation:upright;
+    font-size:13px; letter-spacing:0.35em;
+    color:var(--red); opacity:0.3;
+    z-index:1;
+  }
+  @media (max-width:760px){ .vertical-jp{ display:none; } }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:0.35em; text-transform:uppercase;
+    color:var(--red); margin-bottom:22px;
+    padding:7px 16px; border:1px solid var(--red-deep);
+    position:relative; z-index:2;
+  }
+
+  .hero-title{
+    position:relative; z-index:2;
+    font-size:clamp(64px, 16vw, 200px);
+    font-weight:700; line-height:0.9;
+    letter-spacing:0.02em; text-transform:uppercase;
+    text-shadow:0 0 40px rgba(226,16,31,0.3);
+  }
+  .hero-title span{ color:var(--red); }
+  .hero-title .layer{
+    position:absolute; inset:0;
+    opacity:0; overflow:hidden;
+  }
+  .hero-title.glitch .layer.r{ color:var(--red); opacity:.8; transform:translate(4px,-2px); }
+  .hero-title.glitch .layer.c{ color:#00eaff; opacity:.6; transform:translate(-4px,2px); }
+
+  .hero-sub{
+    position:relative; z-index:2;
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(13px,2vw,17px); letter-spacing:0.12em;
+    color:var(--grey); margin-top:20px; text-transform:uppercase;
+  }
+  .hero-jp{
+    position:relative; z-index:2;
+    margin-top:14px;
+    font-size:clamp(13px,2.4vw,20px);
+    letter-spacing:0.5em;
+    color:var(--red);
+    opacity:0.65;
+    font-weight:300;
+  }
+
+  .cta-row{
+    position:relative; z-index:2;
+    margin-top:40px; display:flex; gap:16px; flex-wrap:wrap; justify-content:center; align-items:center;
+  }
+  .btn.big{
+    font-size:15px; padding:19px 42px; letter-spacing:0.22em;
+  }
+  .btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px; letter-spacing:0.2em; text-transform:uppercase;
+    padding:15px 30px; text-decoration:none;
+    color:var(--white); border:1px solid var(--red-deep);
+    position:relative; overflow:hidden; transition:color .25s, border-color .25s;
+  }
+  .btn::before{
+    content:""; position:absolute; inset:0; left:-100%;
+    background:var(--red); transition:left .3s ease; z-index:-1;
+  }
+  .btn:hover{ color:var(--black); border-color:var(--red); }
+  .btn:hover::before{ left:0; }
+  .btn.primary{
+    border-color:var(--red);
+    background:var(--red);
+    color:var(--black);
+    font-weight:700;
+    box-shadow:0 0 24px rgba(226,16,31,0.45);
+  }
+  .btn.primary::before{ background:var(--white); }
+  .btn.primary:hover{ color:var(--black); border-color:var(--white); }
+  .btn.primary:hover::before{ left:0; }
+
+  .live-stats{
+    position:relative; z-index:2;
+    margin-top:54px;
+    display:flex; gap:0; flex-wrap:wrap; justify-content:center;
+    border:1px solid var(--grey-d);
+  }
+  .live-stats .cell{
+    padding:16px 28px; min-width:120px;
+    border-right:1px solid var(--grey-d);
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+  }
+  .live-stats .cell:last-child{ border-right:none; }
+  .live-stats .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:22px; font-weight:700; color:var(--white);
+  }
+  .live-stats .lab{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey);
+    display:flex; align-items:center; gap:6px;
+  }
+  .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--live); box-shadow:0 0 7px var(--live);
+    animation:blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:.3} }
+  @media (max-width:560px){
+    .live-stats .cell{ min-width:90px; padding:12px 16px; }
+    .live-stats .num{ font-size:17px; }
+  }
+
+  .scroll-hint{
+    position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:0.3em; text-transform:uppercase; color:var(--grey-d);
+    z-index:2;
+    animation:bob 2s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{transform:translate(-50%,0)} 50%{transform:translate(-50%,6px)} }
+
+  /* ---------- SECTIONS ---------- */
+  section.block{ padding:110px 0; position:relative; }
+  .section-head{ margin-bottom:44px; }
+  .section-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:0.3em; color:var(--red);
+  }
+  .jp-accent{
+    color:var(--grey); opacity:0.7; margin-left:8px;
+    letter-spacing:0.2em; font-size:13px;
+  }
+  .section-title{
+    font-size:clamp(32px,5vw,56px); font-weight:600;
+    text-transform:uppercase; letter-spacing:0.02em; margin-top:8px;
+  }
+  .section-title span{ color:var(--red); }
+
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ABOUT */
+  .about-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:start; }
+  .about-text p{ color:#c9c5c2; font-size:17px; margin-bottom:18px; max-width:60ch; }
+  .about-meta{ border-left:2px solid var(--red-deep); padding-left:22px; }
+  .about-meta .row{
+    display:flex; justify-content:space-between; gap:16px;
+    padding:12px 0; border-bottom:1px solid var(--grey-d);
+    font-family:'JetBrains Mono', monospace; font-size:13px;
+  }
+  .about-meta .row .k{ color:var(--grey); letter-spacing:0.1em; text-transform:uppercase; font-size:11px; }
+  .about-meta .row .v{ color:var(--white); }
+  @media (max-width:760px){ .about-grid{ grid-template-columns:1fr; gap:30px; } }
+
+  /* ARSENAL */
+  .arsenal-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+  }
+  .weapon{
+    border:1px solid var(--grey-d);
+    background:linear-gradient(160deg, var(--black-2), rgba(26,5,8,0.6));
+    padding:26px 24px;
+    transition:border-color .3s ease, transform .3s ease;
+    position:relative; overflow:hidden;
+  }
+  .weapon::before{
+    content:""; position:absolute; top:0; left:0; width:3px; height:0;
+    background:var(--red); transition:height .35s ease;
+  }
+  .weapon:hover{ border-color:var(--red-deep); transform:translateY(-4px); }
+  .weapon:hover::before{ height:100%; }
+  .weapon-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--red); margin-bottom:12px;
+  }
+  .weapon-name{
+    font-size:22px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.02em; margin-bottom:12px;
+  }
+  .weapon-name span{ color:var(--grey); font-size:15px; }
+  .weapon p{ color:#b8b4b1; font-size:14px; line-height:1.6; }
+  @media (max-width:860px){ .arsenal-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px){ .arsenal-grid{ grid-template-columns:1fr; } }
+
+  /* MECHANICS */
+  .mech-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .mech{
+    border-left:2px solid var(--red-deep);
+    padding:6px 0 6px 22px;
+  }
+  .mech-name{
+    font-size:19px; font-weight:600; text-transform:uppercase;
+    margin-bottom:10px; color:var(--white);
+  }
+  .mech p{ color:#b8b4b1; font-size:14px; line-height:1.6; }
+  @media (max-width:760px){ .mech-grid{ grid-template-columns:1fr; gap:24px; } }
+
+  /* RESOURCES */
+  .res-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .res-card{
+    display:block; text-decoration:none;
+    border:1px solid var(--grey-d);
+    background:linear-gradient(160deg, var(--black-2), rgba(26,5,8,0.5));
+    padding:30px 28px;
+    transition:border-color .3s ease, transform .3s ease, box-shadow .3s ease;
+    position:relative; overflow:hidden;
+  }
+  .res-card::after{
+    content:"↗"; position:absolute; top:22px; right:24px;
+    color:var(--grey); font-size:20px; transition:color .3s ease, transform .3s ease;
+  }
+  .res-card:hover{
+    border-color:var(--red); transform:translateY(-4px);
+    box-shadow:0 0 30px rgba(226,16,31,0.15);
+  }
+  .res-card:hover::after{ color:var(--red); transform:translate(3px,-3px); }
+  .res-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--red); margin-bottom:14px;
+  }
+  .res-name{
+    font-size:24px; font-weight:600; text-transform:uppercase;
+    margin-bottom:12px; color:var(--white);
+  }
+  .res-card p{ color:#b8b4b1; font-size:14px; line-height:1.6; margin-bottom:18px; }
+  .res-author{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:0.06em; color:var(--grey);
+    padding-top:14px; border-top:1px solid var(--grey-d);
+  }
+  .res-author b{ color:var(--white); font-weight:700; }
+  @media (max-width:680px){ .res-grid{ grid-template-columns:1fr; } }
+
+  /* TRAILER */
+  .trailer-frame{
+    position:relative; display:block; width:100%; aspect-ratio:16/9;
+    border:1px solid var(--red-deep);
+    box-shadow:0 0 40px rgba(226,16,31,0.12);
+    overflow:hidden; text-decoration:none;
+    background:var(--black-2);
+  }
+  .trailer-thumb{
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:brightness(0.55) saturate(1.1);
+    transition:filter .4s ease, transform .6s ease;
+  }
+  .trailer-frame:hover .trailer-thumb{ filter:brightness(0.7) saturate(1.2); transform:scale(1.03); }
+  .trailer-play{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:80px; height:80px; border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 30px rgba(226,16,31,0.7);
+    transition:transform .3s ease;
+  }
+  .trailer-play::after{
+    content:""; position:absolute; top:50%; left:54%; transform:translate(-50%,-50%);
+    border-style:solid; border-width:16px 0 16px 26px;
+    border-color:transparent transparent transparent var(--black);
+  }
+  .trailer-frame:hover .trailer-play{ transform:translate(-50%,-50%) scale(1.12); }
+  .trailer-cta{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:16px; text-align:center;
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+    letter-spacing:0.18em; text-transform:uppercase; color:var(--white);
+    background:linear-gradient(180deg, transparent, rgba(6,6,6,0.9));
+  }
+
+  /* GALLERY */
+  .gallery{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+  }
+  .shot{
+    aspect-ratio:16/10; border:1px solid var(--grey-d);
+    background:linear-gradient(135deg, var(--black-2), #1a0508);
+    position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .shot img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease, filter .5s ease; }
+  .shot:hover img{ transform:scale(1.05); filter:saturate(1.2); }
+  .shot .placeholder{
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.2em; color:var(--grey-d); text-transform:uppercase; text-align:center; padding:20px;
+  }
+  .shot::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg, transparent 50%, rgba(6,6,6,0.85));
+  }
+  .shot .author{
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    padding:12px 14px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:0.08em;
+    color:var(--white);
+    display:flex; align-items:center; gap:7px;
+  }
+  .shot .author::before{
+    content:"@"; color:var(--red); font-weight:700;
+  }
+  .shot a.author{ text-decoration:none; }
+  .shot a.author:hover{ color:var(--red); }
+  .gallery-empty{
+    text-align:center; padding:40px;
+    font-family:'JetBrains Mono', monospace; font-size:13px;
+    letter-spacing:0.15em; color:var(--grey); text-transform:uppercase;
+    border:1px dashed var(--grey-d);
+  }
+  @media (max-width:760px){ .gallery{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:460px){ .gallery{ grid-template-columns:1fr; } }
+
+  /* CLIPS */
+  .clips-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:18px; }
+  .clip{
+    border:1px solid var(--grey-d);
+    background:var(--black-2);
+    overflow:hidden;
+    transition:border-color .3s ease, transform .3s ease;
+  }
+  .clip:hover{ border-color:var(--red-deep); transform:translateY(-3px); }
+  .clip-media{
+    position:relative; width:100%; aspect-ratio:16/9;
+    background:#000; display:block;
+  }
+  .clip-media iframe{ width:100%; height:100%; border:0; display:block; }
+  .clip-media a{
+    display:block; width:100%; height:100%; position:relative;
+  }
+  .clip-media img{ width:100%; height:100%; object-fit:cover; display:block; filter:brightness(0.7); transition:filter .3s; }
+  .clip-media a:hover img{ filter:brightness(0.9); }
+  .clip-media .play-ov{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:60px; height:60px; border-radius:50%;
+    background:var(--red); box-shadow:0 0 22px rgba(226,16,31,0.7);
+  }
+  .clip-media .play-ov::after{
+    content:""; position:absolute; top:50%; left:54%; transform:translate(-50%,-50%);
+    border-style:solid; border-width:12px 0 12px 20px;
+    border-color:transparent transparent transparent var(--black);
+  }
+  .clip-info{ padding:14px 16px; }
+  .clip-title{ font-size:16px; font-weight:600; color:var(--white); margin-bottom:5px; }
+  .clip-author{
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--grey);
+  }
+  .clip-author::before{ content:"@"; color:var(--red); font-weight:700; }
+  @media (max-width:680px){ .clips-grid{ grid-template-columns:1fr; } }
+
+  /* JOIN / CTA final */
+  .join{
+    text-align:center; padding:120px 28px;
+    border-top:1px solid var(--grey-d);
+    background:radial-gradient(ellipse at 50% 0%, rgba(226,16,31,0.1), transparent 60%);
+  }
+  .join h2{ font-size:clamp(36px,6vw,68px); font-weight:700; text-transform:uppercase; }
+  .join h2 span{ color:var(--red); }
+  .join p{ color:var(--grey); font-family:'JetBrains Mono', monospace; font-size:13px; letter-spacing:0.1em; margin:16px 0 34px; }
+
+  /* FOOTER */
+  footer{
+    padding:40px 28px; text-align:center;
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.15em; color:var(--grey-d); text-transform:uppercase;
+  }
+  footer .visitors{ color:var(--grey); margin-bottom:10px; }
+  footer .visitors b{ color:var(--red); }
+  footer .disclaimer{ opacity:0.7; margin-top:10px; }
+
+  /* ---- Lecteur audio sur le côté ---- */
+  .audio-zone{
+    position:fixed; bottom:24px; right:24px; z-index:60;
+    display:flex; flex-direction:column; align-items:flex-end; gap:12px;
+  }
+  .audio-btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--red); background:rgba(6,6,6,0.88);
+    border:1px solid var(--red); padding:11px 20px; cursor:pointer;
+    backdrop-filter:blur(4px); transition:color .25s, background .25s;
+  }
+  .audio-btn:hover{ color:var(--black); background:var(--red); }
+  .spotify-wrap{
+    width:300px; max-width:80vw;
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height .4s ease, opacity .4s ease;
+    background:var(--black); border:0;
+  }
+  .spotify-wrap.open{
+    max-height:172px; opacity:1;
+    border:1px solid var(--red); box-shadow:0 0 18px rgba(226,16,31,0.35);
+  }
+  .spotify-wrap iframe{ width:100%; height:152px; border:0; display:block; }
+  @media (max-width:560px){ .audio-zone{ bottom:14px; right:14px; } }
+
+  /* ---- Barre de progression de scroll ---- */
+  .scroll-progress{
+    position:fixed; top:0; left:0; height:3px; width:0%;
+    background:linear-gradient(90deg, var(--red-deep), var(--red));
+    box-shadow:0 0 10px var(--red);
+    z-index:70; transition:width .1s linear;
+  }
+
+  /* ---- Bouton soumettre création ---- */
+  .gallery-submit{ text-align:center; margin-top:34px; }
+
+  /* ---- LINKS section ---- */
+  .links-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+  }
+  .link-chip{
+    display:flex; flex-direction:column; gap:4px;
+    padding:18px 22px; text-decoration:none;
+    border:1px solid var(--grey-d);
+    background:var(--black-2);
+    transition:border-color .25s, transform .25s, background .25s;
+  }
+  .link-chip:hover{ border-color:var(--red); transform:translateY(-3px); }
+  .link-chip .lc-k{
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:0.2em; text-transform:uppercase; color:var(--red);
+  }
+  .link-chip .lc-v{ color:var(--white); font-size:16px; letter-spacing:0.02em; }
+  .link-chip.support{ border-color:var(--red-deep); }
+  .link-chip.support:hover{ background:rgba(226,16,31,0.08); }
+  @media (max-width:760px){ .links-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:460px){ .links-grid{ grid-template-columns:1fr; } }
+
+  /* ---- CREDITS ---- */
+  .credits-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  .credit{
+    display:flex; flex-direction:column; gap:5px;
+    padding:18px 20px; border-left:2px solid var(--red-deep);
+  }
+  .credit .c-role{
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:0.18em; text-transform:uppercase; color:var(--grey);
+  }
+  .credit .c-name{ font-size:19px; font-weight:600; color:var(--white); }
+  .credits-note{
+    margin-top:26px; color:var(--grey);
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.06em;
+  }
+  @media (max-width:560px){ .credits-grid{ grid-template-columns:1fr; } }
+
+  /* ---- IDEA FAB + MODAL ---- */
+  .idea-fab{
+    position:fixed; bottom:24px; left:24px; z-index:60;
+    display:flex; align-items:center; gap:9px;
+    padding:12px 18px;
+    background:rgba(6,6,6,0.88);
+    border:1px solid var(--red-deep);
+    cursor:pointer;
+    backdrop-filter:blur(4px);
+    transition:border-color .25s, transform .25s, box-shadow .25s;
+  }
+  .idea-fab:hover{
+    border-color:var(--red);
+    box-shadow:0 0 18px rgba(226,16,31,0.35);
+    transform:translateY(-2px);
+  }
+  .idea-fab-mark{
+    font-family:'JetBrains Mono', monospace; font-weight:700;
+    color:var(--red); font-size:14px;
+  }
+  .idea-fab-text{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--white);
+  }
+  @media (max-width:560px){
+    .idea-fab{ bottom:14px; left:14px; padding:10px 14px; }
+    .idea-fab-text{ font-size:10px; letter-spacing:0.15em; }
+  }
+
+  .idea-modal{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(0,0,0,0.8); backdrop-filter:blur(4px);
+    display:none; align-items:center; justify-content:center; padding:24px;
+  }
+  .idea-modal.open{ display:flex; }
+  .idea-box{
+    position:relative; width:440px; max-width:100%;
+    background:var(--black-2); border:1px solid var(--red);
+    box-shadow:0 0 40px rgba(226,16,31,0.25);
+    padding:34px 30px;
+  }
+  .idea-box h3{ font-size:26px; text-transform:uppercase; margin-bottom:8px; }
+  .idea-box p{ color:var(--grey); font-size:13px; margin-bottom:20px; font-family:'JetBrains Mono',monospace; }
+  .idea-box input, .idea-box textarea{
+    width:100%; margin-bottom:14px; padding:12px 14px;
+    background:var(--black); border:1px solid var(--grey-d); color:var(--white);
+    font-family:'JetBrains Mono', monospace; font-size:14px; resize:vertical;
+  }
+  .idea-box input:focus, .idea-box textarea:focus{ outline:none; border-color:var(--red); }
+  .idea-box .btn{ width:100%; cursor:pointer; border:1px solid var(--red); }
+  .idea-close{
+    position:absolute; top:12px; right:14px;
+    background:none; border:none; color:var(--grey);
+    font-size:26px; cursor:pointer; line-height:1;
+  }
+  .idea-close:hover{ color:var(--red); }
+  .idea-status{ margin-top:12px; font-family:'JetBrains Mono', monospace; font-size:12px; text-align:center; min-height:18px; }
+  .idea-status.ok{ color:var(--live); }
+  .idea-status.err{ color:var(--red); }
+
+  /* ---- LIGHTBOX ---- */
+  .lightbox{
+    position:fixed; inset:0; z-index:210;
+    background:rgba(0,0,0,0.92); backdrop-filter:blur(6px);
+    display:none; align-items:center; justify-content:center; padding:40px;
+    flex-direction:column; gap:14px;
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox img{
+    max-width:90vw; max-height:80vh; object-fit:contain;
+    border:1px solid var(--red-deep); box-shadow:0 0 40px rgba(226,16,31,0.2);
+  }
+  .lightbox-author{
+    font-family:'JetBrains Mono', monospace; font-size:14px;
+    letter-spacing:0.08em; color:var(--white);
+  }
+  .lightbox-author::before{ content:"@"; color:var(--red); font-weight:700; }
+  .lightbox-close{
+    position:absolute; top:20px; right:28px;
+    background:none; border:none; color:var(--white);
+    font-size:38px; cursor:pointer; line-height:1;
+  }
+  .lightbox-close:hover{ color:var(--red); }
+
+  /* ---- Accessibilité : réduire les animations ---- */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001s !important; animation-iteration-count:1 !important; transition-duration:0.1s !important; }
+    .intro{ display:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<div class="intro" id="intro">
+  <div class="intro-stage">
+    <div class="intro-title" id="introTitle">
+      <span class="half top">RED<b>LINER</b></span>
+      <span class="half bottom">RED<b>LINER</b></span>
+    </div>
+    <div class="slash" id="slash"></div>
+  </div>
+  <div class="intro-jp" id="introJp">レッドライナー</div>
+</div>
+
+<nav>
+  <a href="#top" class="brand">RED<span>LINER</span></a>
+  <div class="nav-links">
+    <a href="#about" data-i18n="navAbout">Le jeu</a>
+    <a href="#arsenal" data-i18n="navArsenal">Arsenal</a>
+    <a href="#mechanics" data-i18n="navMechanics">Mécaniques</a>
+    <a href="#resources" data-i18n="navResources">Ressources</a>
+    <a href="#trailer" data-i18n="navTrailer">Trailer</a>
+    <a href="#gallery" data-i18n="navGallery">Créations</a>
+    <a href="#clips" data-i18n="navClips">Clips</a>
+    <a href="#join" data-i18n="navJoin">Rejoindre</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="vertical-jp" aria-hidden="true">スピード・レース・限界突破</div>
+  <div class="eyebrow" data-i18n="eyebrow">// Fan hub · non-officiel</div>
+  <h1 class="hero-title" id="heroTitle">
+    RED<span>LINER</span>
+    <span class="layer r" aria-hidden="true">REDLINER</span>
+    <span class="layer c" aria-hidden="true">REDLINER</span>
+  </h1>
+  <div class="hero-jp" aria-hidden="true">レッドライナー</div>
+  <div class="hero-sub" data-i18n="heroSub">Le jeu est disponible — rejoins la course</div>
+
+  <div class="cta-row">
+    <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn primary big" data-i18n="play">▶ Jouer maintenant</a>
+    <a href="https://discord.gg/redliner" target="_blank" class="btn" data-i18n="discord">Discord</a>
+  </div>
+
+  <div class="live-stats">
+    <div class="cell"><span class="num" id="statPlaying">—</span><span class="lab"><span class="dot"></span><span data-i18n="statPlaying">en ligne</span></span></div>
+    <div class="cell"><span class="num" id="statLikes">—</span><span class="lab" data-i18n="statLikes">likes</span></div>
+    <div class="cell"><span class="num" id="statVisits">—</span><span class="lab" data-i18n="statVisits">visites</span></div>
+    <div class="cell"><span class="num" id="statFavorites">—</span><span class="lab" data-i18n="statFavorites">favoris</span></div>
+  </div>
+
+  <div class="scroll-hint" data-i18n="scroll">défiler ↓</div>
+</header>
+
+<section class="block" id="about">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">01 — <span data-i18n="navAbout">Le jeu</span> <span class="jp-accent">情報</span></div>
+      <h2 class="section-title" data-i18n="aboutTitle">À propos de <span>RED LINER</span></h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p data-i18n="aboutP1">RED LINER est un Hyper FPS sur Roblox où le mouvement est ton arme. Enchaîne dashes, wallruns et slides pour prendre de vitesse tes adversaires, et dévie les balles avec des parades de katana pour renverser le combat.</p>
+        <p data-i18n="aboutP2">Le momentum est ta plus grande force. Ce site est un hub réalisé par un fan pour suivre le jeu, ses stats en direct, son arsenal et sa communauté.</p>
+      </div>
+      <div class="about-meta reveal">
+        <div class="row"><span class="k" data-i18n="metaGenre">Genre</span><span class="v" data-i18n="metaFps">Hyper FPS</span></div>
+        <div class="row"><span class="k" data-i18n="metaPlatform">Plateforme</span><span class="v">PC / Console</span></div>
+        <div class="row"><span class="k" data-i18n="metaControls">Contrôles</span><span class="v" data-i18n="metaKbm">Clavier-souris</span></div>
+        <div class="row"><span class="k" data-i18n="metaStatus">État</span><span class="v" data-i18n="metaLive">Disponible</span></div>
+        <div class="row"><span class="k" data-i18n="metaPrice">Prix</span><span class="v" data-i18n="metaFree">Gratuit</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="arsenal">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">02 — <span data-i18n="navArsenal">Arsenal</span> <span class="jp-accent">武器</span></div>
+      <h2 class="section-title" data-i18n="arsenalTitle">L'<span>arsenal</span></h2>
+    </div>
+    <div class="arsenal-grid">
+      <div class="weapon reveal">
+        <div class="weapon-tag" data-i18n="wMelee">Mêlée principale</div>
+        <h3 class="weapon-name">The Redliner <span data-i18n="wKatana">(Katana)</span></h3>
+        <p data-i18n="wKatanaD">Ton arme de mêlée. Dévie les balles avec Parry (F), affronte tes adversaires de face où la vitesse décide du vainqueur, et charge de Wide Slashes dévastateurs en slidant.</p>
+      </div>
+      <div class="weapon reveal">
+        <div class="weapon-tag" data-i18n="wGear">Équipement gauche</div>
+        <h3 class="weapon-name">The Mach Grappler</h3>
+        <p data-i18n="wGrapplerD">Pour une hyper-mobilité. Utilise Chase pour t'accrocher aux ennemis aériens, ou exécute un Ground Slam d'en haut pour infliger une énorme Instabilité à l'impact.</p>
+      </div>
+      <div class="weapon reveal">
+        <div class="weapon-tag" data-i18n="wRanged">Arme à distance (Q)</div>
+        <h3 class="weapon-name">The Castigate</h3>
+        <p data-i18n="wCastigateD">Un lourd revolver magnum avec verrouillage Scan Aim. Les balles traversent les murs et te soignent quand elles touchent.</p>
+      </div>
+      <div class="weapon reveal">
+        <div class="weapon-tag" data-i18n="wRanged">Arme à distance (Q)</div>
+        <h3 class="weapon-name">The Phoenix</h3>
+        <p data-i18n="wPhoenixD">Un obusier portatif tirant des projectiles explosifs lents et lourds, avec dégâts de zone.</p>
+      </div>
+      <div class="weapon reveal">
+        <div class="weapon-tag" data-i18n="wRanged">Arme à distance (Q)</div>
+        <h3 class="weapon-name">The Siege</h3>
+        <p data-i18n="wSiegeD">Un fusil à pompe double canon tirant en cône. Fort recul qui propulse le tireur en arrière.</p>
+      </div>
+      <div class="weapon reveal">
+        <div class="weapon-tag" data-i18n="wRanged">Arme à distance (Q)</div>
+        <h3 class="weapon-name">The Monarch</h3>
+        <p data-i18n="wMonarchD">Un sniper anti-matériel qui surligne les cibles une fois en visée et perce les murs épais.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="mechanics">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">03 — <span data-i18n="navMechanics">Mécaniques</span> <span class="jp-accent">仕組み</span></div>
+      <h2 class="section-title" data-i18n="mechTitle">Mécaniques <span>de combat</span></h2>
+    </div>
+    <div class="mech-grid">
+      <div class="mech reveal">
+        <h3 class="mech-name" data-i18n="mStamina">Système de Stamina</h3>
+        <p data-i18n="mStaminaD">Trois barres de stamina alimentent tes mouvements. Le Dash coûte 1 barre, le Wide Slash en vide 2. La stamina se recharge plus vite au sol ou en wallrun.</p>
+      </div>
+      <div class="mech reveal">
+        <h3 class="mech-name" data-i18n="mInstability">Instabilité</h3>
+        <p data-i18n="mInstabilityD">Monte de 1% à 100% quand tu rates des parades, te fais slammer, ou encaisses le recul d'une balle parée. Décroît lentement ou en touchant en mêlée.</p>
+      </div>
+      <div class="mech reveal">
+        <h3 class="mech-name" data-i18n="mDestab">Déstabilisation</h3>
+        <p data-i18n="mDestabD">Dépasser 100% d'Instabilité te bloque dans un état Déstabilisé pendant 5 secondes. Attaques, parades et dashes sont temporairement désactivés.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="resources">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">04 — <span data-i18n="navResources">Ressources</span> <span class="jp-accent">資料</span></div>
+      <h2 class="section-title" data-i18n="resTitle">Guides & <span>ressources</span></h2>
+    </div>
+    <div class="res-grid">
+      <a href="https://redliner.likegravity.dev/wiki" target="_blank" rel="noopener" class="res-card reveal">
+        <div class="res-tag" data-i18n="resForPlayers">Pour les joueurs</div>
+        <h3 class="res-name" data-i18n="resWiki">Wiki RED LINER</h3>
+        <p data-i18n="resWikiD">Guide complet pour les nouveaux joueurs : mécaniques, armes, tech de mouvement et stratégies de combat.</p>
+        <div class="res-author"><span data-i18n="resBy">Par</span> <b>likegravity</b></div>
+      </a>
+      <a href="https://docs.google.com/document/d/1qa3FLGeY05yD33Ku4QvF4VqTmQd9ztS3b3PN4FmgDuI/edit" target="_blank" rel="noopener" class="res-card reveal">
+        <div class="res-tag" data-i18n="resForDevs">Pour aller plus loin</div>
+        <h3 class="res-name" data-i18n="resDoc">Doc technique</h3>
+        <p data-i18n="resDocD">Document rassemblant des informations détaillées et brutes sur le jeu et ses systèmes.</p>
+        <div class="res-author"><span data-i18n="resBy">Par</span> <b>Zerby D. Quan (Speedliner)</b></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="trailer">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">05 — <span data-i18n="navTrailer">Trailer</span> <span class="jp-accent">映像</span></div>
+      <h2 class="section-title" data-i18n="trailerTitle">Regarde le <span>trailer</span></h2>
+    </div>
+    <a class="trailer-frame reveal" href="https://youtu.be/kR3q2EPYiEY" target="_blank" rel="noopener" id="trailerLink">
+      <img class="trailer-thumb" src="https://i.ytimg.com/vi/kR3q2EPYiEY/maxresdefault.jpg" alt="RED LINER trailer"
+        onerror="this.src='https://i.ytimg.com/vi/kR3q2EPYiEY/hqdefault.jpg'">
+      <span class="trailer-play" aria-hidden="true"></span>
+      <span class="trailer-cta" data-i18n="watchTrailer">Regarder le trailer sur YouTube</span>
+    </a>
+  </div>
+</section>
+
+<section class="block" id="gallery">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">06 — <span data-i18n="navGallery">Créations</span> <span class="jp-accent">作品</span></div>
+      <h2 class="section-title" data-i18n="galleryTitle">Créations de la <span>communauté</span></h2>
+    </div>
+    <div class="gallery reveal" id="galleryGrid">
+      <!-- Rempli automatiquement depuis creations.js -->
+    </div>
+    <div class="gallery-empty" id="galleryEmpty" data-i18n="galleryEmpty" style="display:none;">
+      Aucune création pour l'instant — reviens bientôt !
+    </div>
+  </div>
+</section>
+
+<section class="block" id="clips">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">07 — <span data-i18n="navClips">Clips</span> <span class="jp-accent">クリップ</span></div>
+      <h2 class="section-title" data-i18n="clipsTitle">Clips de la <span>communauté</span></h2>
+    </div>
+    <div class="clips-grid reveal" id="clipsGrid">
+      <!-- Rempli automatiquement depuis clips.js -->
+    </div>
+    <div class="gallery-empty" id="clipsEmpty" data-i18n="clipsEmpty" style="display:none;">
+      Aucun clip pour l'instant — reviens bientôt !
+    </div>
+  </div>
+</section>
+
+<section class="block" id="links">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">08 — <span data-i18n="navLinks">Liens</span> <span class="jp-accent">リンク</span></div>
+      <h2 class="section-title" data-i18n="linksTitle">Liens <span>officiels</span></h2>
+    </div>
+    <div class="links-grid reveal">
+      <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" rel="noopener" class="link-chip"><span class="lc-k">Roblox</span><span class="lc-v" data-i18n="lcGame">Le jeu</span></a>
+      <a href="https://www.roblox.com/communities/35646671/REDLINER" target="_blank" rel="noopener" class="link-chip"><span class="lc-k">Roblox</span><span class="lc-v" data-i18n="lcGroup">Communauté</span></a>
+      <a href="https://discord.gg/redliner" target="_blank" rel="noopener" class="link-chip"><span class="lc-k">Discord</span><span class="lc-v" data-i18n="lcDiscord">Serveur</span></a>
+      <a href="https://www.instagram.com/qitadel" target="_blank" rel="noopener" class="link-chip"><span class="lc-k">Instagram</span><span class="lc-v">@qitadel</span></a>
+      <a href="https://www.tiktok.com/@qitadel" target="_blank" rel="noopener" class="link-chip"><span class="lc-k">TikTok</span><span class="lc-v">@qitadel</span></a>
+      <a href="https://open.spotify.com/playlist/09edtb5s3VCzdLJMfOFDjQ" target="_blank" rel="noopener" class="link-chip"><span class="lc-k">Spotify</span><span class="lc-v" data-i18n="lcPlaylist">Playlist</span></a>
+      <a href="https://on.soundcloud.com/ypVVlpBXtw3hjyJTMr" target="_blank" rel="noopener" class="link-chip"><span class="lc-k">SoundCloud</span><span class="lc-v" data-i18n="lcMusic">Musique</span></a>
+      <a href="https://buymeacoffee.com/jstinfps" target="_blank" rel="noopener" class="link-chip support"><span class="lc-k" data-i18n="lcSupport">Soutenir</span><span class="lc-v">Buy me a coffee</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="credits">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num">09 — <span data-i18n="navCredits">Crédits</span> <span class="jp-accent">感謝</span></div>
+      <h2 class="section-title" data-i18n="creditsTitle">Merci à <span>eux</span></h2>
+    </div>
+    <div class="credits-grid reveal">
+      <div class="credit"><span class="c-role" data-i18n="cDev">Développeur du jeu</span><span class="c-name">jstin</span></div>
+      <div class="credit"><span class="c-role" data-i18n="cWiki">Wiki</span><span class="c-name">likegravity</span></div>
+      <div class="credit"><span class="c-role" data-i18n="cDoc">Doc technique</span><span class="c-name">Zerby D. Quan (Speedliner)</span></div>
+      <div class="credit"><span class="c-role" data-i18n="cSite">Ce site (fan)</span><span class="c-name">Louvitox</span></div>
+    </div>
+    <p class="credits-note" data-i18n="creditsNote">Et merci à toute la communauté, aux testeurs et aux créateurs de contenu.</p>
+  </div>
+</section>
+
+<section class="join" id="join">
+  <div class="reveal">
+    <h2 data-i18n="joinTitle">Rejoins la <span>communauté</span></h2>
+    <p data-i18n="joinSub">Le jeu t'attend. Le Discord aussi.</p>
+    <div class="cta-row" style="justify-content:center;">
+      <a href="https://www.roblox.com/games/94987506187454/REDLINER" target="_blank" class="btn primary" data-i18n="play">▶ Jouer maintenant</a>
+      <a href="https://discord.gg/redliner" target="_blank" class="btn" data-i18n="discord">Discord</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="visitors"><span class="dot" style="background:var(--red); box-shadow:0 0 7px var(--red); display:inline-block; vertical-align:middle; margin-right:6px;"></span><b id="visitorCount">—</b> <span data-i18n="visitors">visiteurs</span></div>
+  <div>RED LINER · Fan Hub</div>
+  <div class="disclaimer" data-i18n="disclaimer">Site de fan non-officiel · non affilié aux créateurs du jeu</div>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Fermer">×</button>
+  <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-author" id="lightboxAuthor"></div>
+</div>
+
+<div class="idea-fab" id="ideaFab" data-i18n-title="ideaTitle">
+  <span class="idea-fab-mark">//</span>
+  <span class="idea-fab-text" data-i18n="ideaFabLabel">Feedback</span>
+</div>
+
+<div class="idea-modal" id="ideaModal">
+  <div class="idea-box">
+    <button class="idea-close" id="ideaClose" aria-label="Fermer">×</button>
+    <h3 data-i18n="ideaHeading">Une idée pour le site ?</h3>
+    <p data-i18n="ideaSub">Laisse ton pseudo et ton message, ça m'aide à améliorer le site.</p>
+    <input type="text" id="ideaPseudo" maxlength="32" placeholder="Pseudo (Discord)" data-i18n-ph="ideaPseudoPh">
+    <textarea id="ideaMessage" maxlength="500" rows="4" placeholder="Ton idée ou ton message..." data-i18n-ph="ideaMsgPh"></textarea>
+    <button class="btn primary" id="ideaSend" data-i18n="ideaSend">Envoyer</button>
+    <div class="idea-status" id="ideaStatus"></div>
+  </div>
+</div>
+
+<div class="audio-zone">
+  <div class="spotify-wrap" id="spotifyWrap">
+    <iframe id="spotifyFrame"
+      src="https://open.spotify.com/embed/playlist/09edtb5s3VCzdLJMfOFDjQ?utm_source=generator&theme=0"
+      loading="lazy"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  </div>
+  <button class="audio-btn" id="audioBtn">&#9654; <span data-i18n="audioPlay">Ambiance</span></button>
+</div>
+
+<script src="creations.js"></script>
+<script src="clips.js"></script>
+<script>
+  // ---- Intro katana ----
+  (function(){
+    const intro = document.getElementById('intro');
+    if(!intro) return;
+    // évite de rejouer l'intro si déjà vue dans cette session
+    let seen = false;
+    try { seen = sessionStorage.getItem('rl_intro_seen') === '1'; } catch(e){}
+    if(seen){
+      intro.style.display = 'none';
+      document.body.style.overflow = '';
+      return;
+    }
+    document.body.style.overflow = 'hidden'; // bloque le scroll pendant l'intro
+    // 1) petit délai, 2) coupe (slash + écartement), 3) sortie
+    setTimeout(()=> intro.classList.add('cut'), 700);
+    setTimeout(()=>{
+      intro.classList.add('done');
+      document.body.style.overflow = '';
+      try { sessionStorage.setItem('rl_intro_seen','1'); } catch(e){}
+    }, 1750);
+    setTimeout(()=>{ intro.style.display='none'; }, 2400);
+  })();
+
+  // ---- Traductions FR / EN ----
+  const I18N = {
+    fr: {
+      navAbout:"Le jeu", navTrailer:"Trailer", navGallery:"Créations", navJoin:"Rejoindre",
+      eyebrow:"// Fan hub · non-officiel",
+      heroSub:"Le jeu est disponible — rejoins la course",
+      play:"▶ Jouer maintenant", discord:"Discord",
+      statPlaying:"en ligne", statLikes:"likes", statVisits:"visites", statFavorites:"favoris",
+      scroll:"défiler ↓",
+      aboutTitle:'À propos de <span>RED LINER</span>',
+      aboutP1:"RED LINER est une expérience Roblox au style affirmé : ambiance sombre, rouge et tranchante. Ce site est un hub réalisé par un fan pour suivre le jeu, ses stats en direct et sa communauté.",
+      aboutP2:"Toutes les infos importantes au même endroit : le lien officiel du jeu, le Discord de la communauté, le trailer et les visuels. Les statistiques affichées proviennent directement de l'API publique Roblox.",
+      metaPlatform:"Plateforme", metaControls:"Contrôles", metaKbm:"Clavier-souris",
+      metaStatus:"État", metaLive:"Disponible", metaPrice:"Prix", metaFree:"Gratuit",
+      navClips:"Clips",
+      clipsTitle:"Clips de la <span>communauté</span>",
+      clipsEmpty:"Aucun clip pour l'instant — reviens bientôt !",
+      submitCreation:"+ Soumettre ta création",
+      navLinks:"Liens",
+      linksTitle:"Liens <span>officiels</span>",
+      lcGame:"Le jeu",
+      lcTech:"Tech Test",
+      lcGroup:"Communauté",
+      lcDiscord:"Serveur",
+      lcPlaylist:"Playlist",
+      lcMusic:"Musique",
+      lcSupport:"Soutenir",
+      navCredits:"Crédits",
+      creditsTitle:"Merci à <span>eux</span>",
+      cDev:"Développeur du jeu",
+      cWiki:"Wiki",
+      cDoc:"Doc technique",
+      cSite:"Ce site (fan)",
+      creditsNote:"Et merci à toute la communauté, aux testeurs et aux créateurs de contenu.",
+      ideaTitle:"Idée / Feedback",
+      ideaFabLabel:"Feedback",
+      ideaHeading:"Une idée pour le site ?",
+      ideaSub:"Laisse ton pseudo et ton message, ça m'aide à améliorer le site.",
+      ideaPseudoPh:"Pseudo (Discord)",
+      ideaMsgPh:"Ton idée ou ton message...",
+      ideaSend:"Envoyer",
+      ideaOk:"Envoyé, merci !",
+      ideaErrEmpty:"Remplis le pseudo et le message.",
+      ideaErrWait:"Attends encore {t} avant de renvoyer.",
+      ideaErrSend:"Échec de l'envoi. Réessaie.",
+      navResources:"Ressources",
+      resTitle:"Guides & <span>ressources</span>",
+      resForPlayers:"Pour les joueurs",
+      resForDevs:"Pour aller plus loin",
+      resBy:"Par",
+      resWiki:"Wiki RED LINER",
+      resWikiD:"Guide complet pour les nouveaux joueurs : mécaniques, armes, tech de mouvement et stratégies de combat.",
+      resDoc:"Doc technique",
+      resDocD:"Document rassemblant des informations détaillées et brutes sur le jeu et ses systèmes.",
+      navArsenal:"Arsenal",
+      navMechanics:"Mécaniques",
+      metaGenre:"Genre",
+      metaFps:"Hyper FPS",
+      arsenalTitle:"L'<span>arsenal</span>",
+      wMelee:"Mêlée principale",
+      wKatana:"(Katana)",
+      wGear:"Équipement gauche",
+      wRanged:"Arme à distance (Q)",
+      wKatanaD:"Ton arme de mêlée. Dévie les balles avec Parry (F), affronte tes adversaires de face où la vitesse décide du vainqueur, et charge de Wide Slashes dévastateurs en slidant.",
+      wGrapplerD:"Pour une hyper-mobilité. Utilise Chase pour t'accrocher aux ennemis aériens, ou exécute un Ground Slam d'en haut pour infliger une énorme Instabilité à l'impact.",
+      wCastigateD:"Un lourd revolver magnum avec verrouillage Scan Aim. Les balles traversent les murs et te soignent quand elles touchent.",
+      wPhoenixD:"Un obusier portatif tirant des projectiles explosifs lents et lourds, avec dégâts de zone.",
+      wSiegeD:"Un fusil à pompe double canon tirant en cône. Fort recul qui propulse le tireur en arrière.",
+      wMonarchD:"Un sniper anti-matériel qui surligne les cibles une fois en visée et perce les murs épais.",
+      mechTitle:"Mécaniques <span>de combat</span>",
+      mStamina:"Système de Stamina",
+      mStaminaD:"Trois barres de stamina alimentent tes mouvements. Le Dash coûte 1 barre, le Wide Slash en vide 2. La stamina se recharge plus vite au sol ou en wallrun.",
+      mInstability:"Instabilité",
+      mInstabilityD:"Monte de 1% à 100% quand tu rates des parades, te fais slammer, ou encaisses le recul d'une balle parée. Décroît lentement ou en touchant en mêlée.",
+      mDestab:"Déstabilisation",
+      mDestabD:"Dépasser 100% d'Instabilité te bloque dans un état Déstabilisé pendant 5 secondes. Attaques, parades et dashes sont temporairement désactivés.",
+      trailerTitle:'Regarde le <span>trailer</span>',
+      watchTrailer:"Regarder le trailer sur YouTube",
+      galleryTitle:'Créations de la <span>communauté</span>',
+      galleryEmpty:"Aucune création pour l'instant — reviens bientôt !",
+      joinTitle:'Rejoins la <span>communauté</span>',
+      joinSub:"Le jeu t'attend. Le Discord aussi.",
+      visitors:"visiteurs",
+      audioPlay:"Ambiance", audioClose:"Fermer",
+      disclaimer:"Site de fan non-officiel · non affilié aux créateurs du jeu"
+    },
+    en: {
+      navAbout:"The game", navTrailer:"Trailer", navGallery:"Creations", navJoin:"Join",
+      eyebrow:"// Fan hub · unofficial",
+      heroSub:"The game is live — join the race",
+      play:"▶ Play now", discord:"Discord",
+      statPlaying:"online", statLikes:"likes", statVisits:"visits", statFavorites:"favorites",
+      scroll:"scroll ↓",
+      aboutTitle:'About <span>RED LINER</span>',
+      aboutP1:"RED LINER is a Roblox experience with a bold identity: dark, red and sharp. This site is a fan-made hub to follow the game, its live stats and its community.",
+      aboutP2:"Everything important in one place: the official game link, the community Discord, the trailer and visuals. The stats shown come straight from the public Roblox API.",
+      metaPlatform:"Platform", metaControls:"Controls", metaKbm:"Keyboard & mouse",
+      metaStatus:"Status", metaLive:"Live", metaPrice:"Price", metaFree:"Free",
+      navClips:"Clips",
+      clipsTitle:"Community <span>clips</span>",
+      clipsEmpty:"No clips yet — check back soon!",
+      submitCreation:"+ Submit your creation",
+      navLinks:"Links",
+      linksTitle:"Official <span>links</span>",
+      lcGame:"The game",
+      lcTech:"Tech Test",
+      lcGroup:"Community",
+      lcDiscord:"Server",
+      lcPlaylist:"Playlist",
+      lcMusic:"Music",
+      lcSupport:"Support",
+      navCredits:"Credits",
+      creditsTitle:"Thanks to <span>them</span>",
+      cDev:"Game developer",
+      cWiki:"Wiki",
+      cDoc:"Technical doc",
+      cSite:"This site (fan)",
+      creditsNote:"And thanks to the whole community, testers and content creators.",
+      ideaTitle:"Idea / Feedback",
+      ideaFabLabel:"Feedback",
+      ideaHeading:"An idea for the site?",
+      ideaSub:"Drop your username and message — it helps me improve the site.",
+      ideaPseudoPh:"Username (Discord)",
+      ideaMsgPh:"Your idea or message...",
+      ideaSend:"Send",
+      ideaOk:"Sent, thanks!",
+      ideaErrEmpty:"Fill in username and message.",
+      ideaErrWait:"Wait {t} before sending again.",
+      ideaErrSend:"Failed to send. Try again.",
+      navResources:"Resources",
+      resTitle:"Guides & <span>resources</span>",
+      resForPlayers:"For players",
+      resForDevs:"Go further",
+      resBy:"By",
+      resWiki:"RED LINER Wiki",
+      resWikiD:"Complete guide for new players: mechanics, weapons, movement tech and combat strategies.",
+      resDoc:"Technical doc",
+      resDocD:"A document gathering detailed, raw information about the game and its systems.",
+      navArsenal:"Arsenal",
+      navMechanics:"Mechanics",
+      metaGenre:"Genre",
+      metaFps:"Hyper FPS",
+      arsenalTitle:"The <span>arsenal</span>",
+      wMelee:"Primary melee",
+      wKatana:"(Katana)",
+      wGear:"Left-hand gear",
+      wRanged:"Ranged weapon (Q)",
+      wKatanaD:"Your primary melee weapon. Deflect bullets with Parry (F), clash head-on where speed decides the victor, and charge devastating Wide Slashes while sliding.",
+      wGrapplerD:"Enables hyper-mobility. Use Chase to hook onto airborne enemies, or perform a Ground Slam from above to inflict massive Instability on impact.",
+      wCastigateD:"A heavy magnum revolver with a Scan Aim lock-on. Bullets pierce walls and heal you on hit.",
+      wPhoenixD:"A handheld howitzer firing slow, heavy explosive projectiles with area-of-effect damage.",
+      wSiegeD:"A double-barreled shotgun firing cone scatters. High recoil propels the shooter backwards.",
+      wMonarchD:"An anti-materiel sniper that highlights targets when scoped and pierces thick walls.",
+      mechTitle:"Combat <span>mechanics</span>",
+      mStamina:"Stamina System",
+      mStaminaD:"Three stamina bars power your movements. Dash uses 1 bar, Wide Slash drains 2. Stamina recharges faster while grounded or wallrunning.",
+      mInstability:"Instability",
+      mInstabilityD:"Builds from 1% to 100% when failing parries, being slammed, or taking parried bullet recoil. Slowly decays over time or when landing melee hits.",
+      mDestab:"Destabilization",
+      mDestabD:"Exceeding 100% Instability locks you in a Destabilized state for 5 seconds. Attacks, parries and dashes are temporarily disabled.",
+      trailerTitle:'Watch the <span>trailer</span>',
+      watchTrailer:"Watch the trailer on YouTube",
+      galleryTitle:'Community <span>creations</span>',
+      galleryEmpty:"No creations yet — check back soon!",
+      joinTitle:'Join the <span>community</span>',
+      joinSub:"The game is waiting. So is the Discord.",
+      visitors:"visitors",
+      audioPlay:"Vibe", audioClose:"Close",
+      disclaimer:"Unofficial fan site · not affiliated with the game's creators"
+    },
+    es: {
+      navAbout:"El juego", navTrailer:"Tráiler", navGallery:"Creaciones", navJoin:"Unirse",
+      eyebrow:"// Hub de fans · no oficial",
+      heroSub:"El juego ya está disponible — únete a la carrera",
+      play:"▶ Jugar ahora", discord:"Discord",
+      statPlaying:"en línea", statLikes:"me gusta", statVisits:"visitas", statFavorites:"favoritos",
+      scroll:"desplázate ↓",
+      aboutTitle:'Acerca de <span>RED LINER</span>',
+      aboutP1:"RED LINER es una experiencia de Roblox con una identidad marcada: oscura, roja y afilada. Este sitio es un hub creado por un fan para seguir el juego, sus estadísticas en vivo y su comunidad.",
+      aboutP2:"Todo lo importante en un solo lugar: el enlace oficial del juego, el Discord de la comunidad, el tráiler y las imágenes. Las estadísticas provienen directamente de la API pública de Roblox.",
+      metaPlatform:"Plataforma", metaControls:"Controles", metaKbm:"Teclado y ratón",
+      metaStatus:"Estado", metaLive:"Disponible", metaPrice:"Precio", metaFree:"Gratis",
+      navClips:"Clips",
+      clipsTitle:"Clips de la <span>comunidad</span>",
+      clipsEmpty:"Aún no hay clips — ¡vuelve pronto!",
+      submitCreation:"+ Envía tu creación",
+      navLinks:"Enlaces",
+      linksTitle:"Enlaces <span>oficiales</span>",
+      lcGame:"El juego",
+      lcTech:"Tech Test",
+      lcGroup:"Comunidad",
+      lcDiscord:"Servidor",
+      lcPlaylist:"Playlist",
+      lcMusic:"Música",
+      lcSupport:"Apoyar",
+      navCredits:"Créditos",
+      creditsTitle:"Gracias a <span>ellos</span>",
+      cDev:"Desarrollador del juego",
+      cWiki:"Wiki",
+      cDoc:"Doc técnica",
+      cSite:"Este sitio (fan)",
+      creditsNote:"Y gracias a toda la comunidad, a los testers y a los creadores de contenido.",
+      ideaTitle:"Idea / Feedback",
+      ideaFabLabel:"Feedback",
+      ideaHeading:"¿Una idea para el sitio?",
+      ideaSub:"Deja tu nombre y mensaje — me ayuda a mejorar el sitio.",
+      ideaPseudoPh:"Nombre (Discord)",
+      ideaMsgPh:"Tu idea o mensaje...",
+      ideaSend:"Enviar",
+      ideaOk:"¡Enviado, gracias!",
+      ideaErrEmpty:"Rellena nombre y mensaje.",
+      ideaErrWait:"Espera {t} antes de enviar de nuevo.",
+      ideaErrSend:"Error al enviar. Inténtalo de nuevo.",
+      navResources:"Recursos",
+      resTitle:"Guías y <span>recursos</span>",
+      resForPlayers:"Para jugadores",
+      resForDevs:"Ir más allá",
+      resBy:"Por",
+      resWiki:"Wiki de RED LINER",
+      resWikiD:"Guía completa para nuevos jugadores: mecánicas, armas, tech de movimiento y estrategias de combate.",
+      resDoc:"Doc técnica",
+      resDocD:"Documento que reúne información detallada y sin pulir sobre el juego y sus sistemas.",
+      navArsenal:"Arsenal",
+      navMechanics:"Mecánicas",
+      metaGenre:"Género",
+      metaFps:"Hyper FPS",
+      arsenalTitle:"El <span>arsenal</span>",
+      wMelee:"Cuerpo a cuerpo principal",
+      wKatana:"(Katana)",
+      wGear:"Equipo mano izquierda",
+      wRanged:"Arma a distancia (Q)",
+      wKatanaD:"Tu arma cuerpo a cuerpo. Desvía balas con Parry (F), enfréntate de frente donde la velocidad decide al ganador, y carga Wide Slashes devastadores mientras deslizas.",
+      wGrapplerD:"Permite hipermovilidad. Usa Chase para engancharte a enemigos aéreos, o ejecuta un Ground Slam desde arriba para infligir enorme Inestabilidad al impacto.",
+      wCastigateD:"Un pesado revólver magnum con fijado Scan Aim. Las balas atraviesan muros y te curan al impactar.",
+      wPhoenixD:"Un obús portátil que dispara proyectiles explosivos lentos y pesados con daño en área.",
+      wSiegeD:"Una escopeta de doble cañón que dispara en cono. Alto retroceso que impulsa al tirador hacia atrás.",
+      wMonarchD:"Un rifle francotirador antimaterial que resalta objetivos al apuntar y atraviesa muros gruesos.",
+      mechTitle:"Mecánicas <span>de combate</span>",
+      mStamina:"Sistema de Stamina",
+      mStaminaD:"Tres barras de stamina impulsan tus movimientos. El Dash usa 1 barra, el Wide Slash gasta 2. Se recarga más rápido en el suelo o en wallrun.",
+      mInstability:"Inestabilidad",
+      mInstabilityD:"Sube del 1% al 100% al fallar parries, ser golpeado o recibir el retroceso de una bala parada. Decae lentamente o al golpear cuerpo a cuerpo.",
+      mDestab:"Desestabilización",
+      mDestabD:"Superar el 100% de Inestabilidad te bloquea en estado Desestabilizado durante 5 segundos. Ataques, parries y dashes quedan desactivados.",
+      trailerTitle:'Mira el <span>tráiler</span>',
+      watchTrailer:"Ver el tráiler en YouTube",
+      galleryTitle:'Creaciones de la <span>comunidad</span>',
+      galleryEmpty:"Aún no hay creaciones — ¡vuelve pronto!",
+      joinTitle:'Únete a la <span>comunidad</span>',
+      joinSub:"El juego te espera. El Discord también.",
+      visitors:"visitantes",
+      audioPlay:"Ambiente", audioClose:"Cerrar",
+      disclaimer:"Sitio de fans no oficial · sin afiliación con los creadores del juego"
+    },
+    pt: {
+      navAbout:"O jogo", navTrailer:"Trailer", navGallery:"Criações", navJoin:"Entrar",
+      eyebrow:"// Hub de fãs · não oficial",
+      heroSub:"O jogo já está disponível — entre na corrida",
+      play:"▶ Jogar agora", discord:"Discord",
+      statPlaying:"online", statLikes:"curtidas", statVisits:"visitas", statFavorites:"favoritos",
+      scroll:"role ↓",
+      aboutTitle:'Sobre <span>RED LINER</span>',
+      aboutP1:"RED LINER é uma experiência do Roblox com uma identidade marcante: escura, vermelha e afiada. Este site é um hub feito por um fã para acompanhar o jogo, suas estatísticas ao vivo e sua comunidade.",
+      aboutP2:"Tudo o que importa em um só lugar: o link oficial do jogo, o Discord da comunidade, o trailer e as imagens. As estatísticas vêm diretamente da API pública do Roblox.",
+      metaPlatform:"Plataforma", metaControls:"Controles", metaKbm:"Teclado e mouse",
+      metaStatus:"Status", metaLive:"Disponível", metaPrice:"Preço", metaFree:"Grátis",
+      navClips:"Clipes",
+      clipsTitle:"Clipes da <span>comunidade</span>",
+      clipsEmpty:"Ainda não há clipes — volte em breve!",
+      submitCreation:"+ Envie sua criação",
+      navLinks:"Links",
+      linksTitle:"Links <span>oficiais</span>",
+      lcGame:"O jogo",
+      lcTech:"Tech Test",
+      lcGroup:"Comunidade",
+      lcDiscord:"Servidor",
+      lcPlaylist:"Playlist",
+      lcMusic:"Música",
+      lcSupport:"Apoiar",
+      navCredits:"Créditos",
+      creditsTitle:"Obrigado a <span>eles</span>",
+      cDev:"Desenvolvedor do jogo",
+      cWiki:"Wiki",
+      cDoc:"Doc técnica",
+      cSite:"Este site (fã)",
+      creditsNote:"E obrigado a toda a comunidade, aos testers e aos criadores de conteúdo.",
+      ideaTitle:"Ideia / Feedback",
+      ideaFabLabel:"Feedback",
+      ideaHeading:"Uma ideia para o site?",
+      ideaSub:"Deixe seu nome e mensagem — ajuda a melhorar o site.",
+      ideaPseudoPh:"Nome (Discord)",
+      ideaMsgPh:"Sua ideia ou mensagem...",
+      ideaSend:"Enviar",
+      ideaOk:"Enviado, obrigado!",
+      ideaErrEmpty:"Preencha nome e mensagem.",
+      ideaErrWait:"Aguarde {t} antes de enviar de novo.",
+      ideaErrSend:"Falha ao enviar. Tente de novo.",
+      navResources:"Recursos",
+      resTitle:"Guias e <span>recursos</span>",
+      resForPlayers:"Para jogadores",
+      resForDevs:"Ir além",
+      resBy:"Por",
+      resWiki:"Wiki do RED LINER",
+      resWikiD:"Guia completo para novos jogadores: mecânicas, armas, tech de movimento e estratégias de combate.",
+      resDoc:"Doc técnica",
+      resDocD:"Documento que reúne informações detalhadas e brutas sobre o jogo e seus sistemas.",
+      navArsenal:"Arsenal",
+      navMechanics:"Mecânicas",
+      metaGenre:"Gênero",
+      metaFps:"Hyper FPS",
+      arsenalTitle:"O <span>arsenal</span>",
+      wMelee:"Corpo a corpo principal",
+      wKatana:"(Katana)",
+      wGear:"Equipamento mão esquerda",
+      wRanged:"Arma à distância (Q)",
+      wKatanaD:"Sua arma corpo a corpo. Desvie balas com Parry (F), enfrente de frente onde a velocidade decide o vencedor, e carregue Wide Slashes devastadores enquanto desliza.",
+      wGrapplerD:"Permite hipermobilidade. Use Chase para se prender a inimigos aéreos, ou execute um Ground Slam do alto para causar enorme Instabilidade no impacto.",
+      wCastigateD:"Um pesado revólver magnum com trava Scan Aim. As balas atravessam paredes e curam você ao acertar.",
+      wPhoenixD:"Um obus portátil que dispara projéteis explosivos lentos e pesados com dano em área.",
+      wSiegeD:"Uma espingarda de cano duplo que dispara em cone. Alto recuo que empurra o atirador para trás.",
+      wMonarchD:"Um rifle sniper antimaterial que destaca alvos na mira e perfura paredes grossas.",
+      mechTitle:"Mecânicas <span>de combate</span>",
+      mStamina:"Sistema de Stamina",
+      mStaminaD:"Três barras de stamina movem você. O Dash usa 1 barra, o Wide Slash gasta 2. Recarrega mais rápido no chão ou em wallrun.",
+      mInstability:"Instabilidade",
+      mInstabilityD:"Sobe de 1% a 100% ao falhar parries, ser atingido ou sofrer recuo de bala parada. Decai lentamente ou ao acertar golpes corpo a corpo.",
+      mDestab:"Desestabilização",
+      mDestabD:"Passar de 100% de Instabilidade prende você em estado Desestabilizado por 5 segundos. Ataques, parries e dashes ficam desativados.",
+      trailerTitle:'Assista ao <span>trailer</span>',
+      watchTrailer:"Assistir ao trailer no YouTube",
+      galleryTitle:'Criações da <span>comunidade</span>',
+      galleryEmpty:"Ainda não há criações — volte em breve!",
+      joinTitle:'Entre na <span>comunidade</span>',
+      joinSub:"O jogo te espera. O Discord também.",
+      visitors:"visitantes",
+      audioPlay:"Ambiente", audioClose:"Fechar",
+      disclaimer:"Site de fãs não oficial · sem afiliação com os criadores do jogo"
+    },
+    de: {
+      navAbout:"Das Spiel", navTrailer:"Trailer", navGallery:"Kreationen", navJoin:"Beitreten",
+      eyebrow:"// Fan-Hub · inoffiziell",
+      heroSub:"Das Spiel ist live — steig ins Rennen ein",
+      play:"▶ Jetzt spielen", discord:"Discord",
+      statPlaying:"online", statLikes:"Likes", statVisits:"Besuche", statFavorites:"Favoriten",
+      scroll:"scrollen ↓",
+      aboutTitle:'Über <span>RED LINER</span>',
+      aboutP1:"RED LINER ist ein Roblox-Erlebnis mit einer klaren Identität: dunkel, rot und scharf. Diese Seite ist ein von einem Fan erstellter Hub, um das Spiel, seine Live-Statistiken und seine Community zu verfolgen.",
+      aboutP2:"Alles Wichtige an einem Ort: der offizielle Spiel-Link, der Community-Discord, der Trailer und die Bilder. Die angezeigten Statistiken stammen direkt aus der öffentlichen Roblox-API.",
+      metaPlatform:"Plattform", metaControls:"Steuerung", metaKbm:"Tastatur & Maus",
+      metaStatus:"Status", metaLive:"Verfügbar", metaPrice:"Preis", metaFree:"Kostenlos",
+      navClips:"Clips",
+      clipsTitle:"Community-<span>Clips</span>",
+      clipsEmpty:"Noch keine Clips — schau bald wieder vorbei!",
+      submitCreation:"+ Kreation einreichen",
+      navLinks:"Links",
+      linksTitle:"Offizielle <span>Links</span>",
+      lcGame:"Das Spiel",
+      lcTech:"Tech Test",
+      lcGroup:"Community",
+      lcDiscord:"Server",
+      lcPlaylist:"Playlist",
+      lcMusic:"Musik",
+      lcSupport:"Unterstützen",
+      navCredits:"Credits",
+      creditsTitle:"Danke an <span>sie</span>",
+      cDev:"Spielentwickler",
+      cWiki:"Wiki",
+      cDoc:"Technische Doku",
+      cSite:"Diese Seite (Fan)",
+      creditsNote:"Und danke an die ganze Community, die Tester und Content-Creator.",
+      ideaTitle:"Idee / Feedback",
+      ideaFabLabel:"Feedback",
+      ideaHeading:"Eine Idee für die Seite?",
+      ideaSub:"Hinterlasse Namen und Nachricht — das hilft mir, die Seite zu verbessern.",
+      ideaPseudoPh:"Name (Discord)",
+      ideaMsgPh:"Deine Idee oder Nachricht...",
+      ideaSend:"Senden",
+      ideaOk:"Gesendet, danke!",
+      ideaErrEmpty:"Name und Nachricht ausfüllen.",
+      ideaErrWait:"Warte {t}, bevor du erneut sendest.",
+      ideaErrSend:"Senden fehlgeschlagen. Versuch es erneut.",
+      navResources:"Ressourcen",
+      resTitle:"Guides & <span>Ressourcen</span>",
+      resForPlayers:"Für Spieler",
+      resForDevs:"Tiefer eintauchen",
+      resBy:"Von",
+      resWiki:"RED LINER Wiki",
+      resWikiD:"Vollständiger Guide für neue Spieler: Mechaniken, Waffen, Movement-Tech und Kampfstrategien.",
+      resDoc:"Technische Doku",
+      resDocD:"Ein Dokument mit detaillierten, rohen Informationen über das Spiel und seine Systeme.",
+      navArsenal:"Arsenal",
+      navMechanics:"Mechaniken",
+      metaGenre:"Genre",
+      metaFps:"Hyper FPS",
+      arsenalTitle:"Das <span>Arsenal</span>",
+      wMelee:"Primäre Nahkampfwaffe",
+      wKatana:"(Katana)",
+      wGear:"Linke-Hand-Ausrüstung",
+      wRanged:"Fernkampfwaffe (Q)",
+      wKatanaD:"Deine Nahkampfwaffe. Lenke Kugeln mit Parry (F) ab, stelle dich frontal, wo Tempo über den Sieg entscheidet, und lade verheerende Wide Slashes beim Sliden auf.",
+      wGrapplerD:"Ermöglicht Hypermobilität. Nutze Chase, um dich an fliegende Gegner zu haken, oder führe einen Ground Slam von oben aus für massive Instabilität beim Aufprall.",
+      wCastigateD:"Ein schwerer Magnum-Revolver mit Scan-Aim-Lock-on. Kugeln durchschlagen Wände und heilen dich bei Treffern.",
+      wPhoenixD:"Eine tragbare Haubitze, die langsame, schwere Sprenggeschosse mit Flächenschaden abfeuert.",
+      wSiegeD:"Eine doppelläufige Schrotflinte mit Kegelstreuung. Hoher Rückstoß schleudert den Schützen zurück.",
+      wMonarchD:"Ein Anti-Material-Scharfschützengewehr, das Ziele im Visier hervorhebt und dicke Wände durchschlägt.",
+      mechTitle:"Kampf<span>mechaniken</span>",
+      mStamina:"Stamina-System",
+      mStaminaD:"Drei Stamina-Balken treiben deine Bewegungen an. Dash kostet 1 Balken, Wide Slash 2. Stamina lädt am Boden oder beim Wallrun schneller.",
+      mInstability:"Instabilität",
+      mInstabilityD:"Steigt von 1% auf 100% bei verfehlten Parries, Slams oder pariertem Kugelrückstoß. Sinkt langsam oder bei Nahkampftreffern.",
+      mDestab:"Destabilisierung",
+      mDestabD:"Über 100% Instabilität versetzt dich für 5 Sekunden in einen destabilisierten Zustand. Angriffe, Parries und Dashes sind deaktiviert.",
+      trailerTitle:'Sieh dir den <span>Trailer</span> an',
+      watchTrailer:"Trailer auf YouTube ansehen",
+      galleryTitle:'Kreationen der <span>Community</span>',
+      galleryEmpty:"Noch keine Kreationen — schau bald wieder vorbei!",
+      joinTitle:'Tritt der <span>Community</span> bei',
+      joinSub:"Das Spiel wartet. Der Discord auch.",
+      visitors:"Besucher",
+      audioPlay:"Ambiente", audioClose:"Schließen",
+      disclaimer:"Inoffizielle Fanseite · nicht mit den Spiel-Machern verbunden"
+    },
+    it: {
+      navAbout:"Il gioco", navTrailer:"Trailer", navGallery:"Creazioni", navJoin:"Unisciti",
+      eyebrow:"// Hub per fan · non ufficiale",
+      heroSub:"Il gioco è disponibile — entra nella corsa",
+      play:"▶ Gioca ora", discord:"Discord",
+      statPlaying:"online", statLikes:"mi piace", statVisits:"visite", statFavorites:"preferiti",
+      scroll:"scorri ↓",
+      aboutTitle:'Informazioni su <span>RED LINER</span>',
+      aboutP1:"RED LINER è un'esperienza Roblox dall'identità forte: cupa, rossa e tagliente. Questo sito è un hub creato da un fan per seguire il gioco, le sue statistiche in tempo reale e la sua community.",
+      aboutP2:"Tutto ciò che conta in un solo posto: il link ufficiale del gioco, il Discord della community, il trailer e le immagini. Le statistiche provengono direttamente dall'API pubblica di Roblox.",
+      metaPlatform:"Piattaforma", metaControls:"Controlli", metaKbm:"Tastiera e mouse",
+      metaStatus:"Stato", metaLive:"Disponibile", metaPrice:"Prezzo", metaFree:"Gratis",
+      navClips:"Clip",
+      clipsTitle:"Clip della <span>community</span>",
+      clipsEmpty:"Ancora nessun clip — torna presto!",
+      submitCreation:"+ Invia la tua creazione",
+      navLinks:"Link",
+      linksTitle:"Link <span>ufficiali</span>",
+      lcGame:"Il gioco",
+      lcTech:"Tech Test",
+      lcGroup:"Community",
+      lcDiscord:"Server",
+      lcPlaylist:"Playlist",
+      lcMusic:"Musica",
+      lcSupport:"Sostieni",
+      navCredits:"Crediti",
+      creditsTitle:"Grazie a <span>loro</span>",
+      cDev:"Sviluppatore del gioco",
+      cWiki:"Wiki",
+      cDoc:"Doc tecnica",
+      cSite:"Questo sito (fan)",
+      creditsNote:"E grazie a tutta la community, ai tester e ai creatori di contenuti.",
+      ideaTitle:"Idea / Feedback",
+      ideaFabLabel:"Feedback",
+      ideaHeading:"Un'idea per il sito?",
+      ideaSub:"Lascia nome e messaggio — mi aiuta a migliorare il sito.",
+      ideaPseudoPh:"Nome (Discord)",
+      ideaMsgPh:"La tua idea o messaggio...",
+      ideaSend:"Invia",
+      ideaOk:"Inviato, grazie!",
+      ideaErrEmpty:"Compila nome e messaggio.",
+      ideaErrWait:"Aspetta {t} prima di inviare di nuovo.",
+      ideaErrSend:"Invio fallito. Riprova.",
+      navResources:"Risorse",
+      resTitle:"Guide e <span>risorse</span>",
+      resForPlayers:"Per i giocatori",
+      resForDevs:"Approfondisci",
+      resBy:"Di",
+      resWiki:"Wiki di RED LINER",
+      resWikiD:"Guida completa per i nuovi giocatori: meccaniche, armi, tech di movimento e strategie di combattimento.",
+      resDoc:"Doc tecnica",
+      resDocD:"Un documento che raccoglie informazioni dettagliate e grezze sul gioco e i suoi sistemi.",
+      navArsenal:"Arsenale",
+      navMechanics:"Meccaniche",
+      metaGenre:"Genere",
+      metaFps:"Hyper FPS",
+      arsenalTitle:"L'<span>arsenale</span>",
+      wMelee:"Mischia principale",
+      wKatana:"(Katana)",
+      wGear:"Equip. mano sinistra",
+      wRanged:"Arma a distanza (Q)",
+      wKatanaD:"La tua arma da mischia. Devia i proiettili con Parry (F), affronta i nemici dove la velocità decide il vincitore, e carica Wide Slash devastanti mentre scivoli.",
+      wGrapplerD:"Consente ipermobilità. Usa Chase per agganciarti ai nemici in aria, o esegui un Ground Slam dall'alto per infliggere enorme Instabilità all'impatto.",
+      wCastigateD:"Un pesante revolver magnum con aggancio Scan Aim. I proiettili perforano i muri e ti curano quando colpiscono.",
+      wPhoenixD:"Un obice portatile che spara proiettili esplosivi lenti e pesanti con danno ad area.",
+      wSiegeD:"Un fucile a doppia canna che spara a cono. Forte rinculo che spinge indietro il tiratore.",
+      wMonarchD:"Un fucile di precisione anti-materiale che evidenzia i bersagli mirando e perfora muri spessi.",
+      mechTitle:"Meccaniche <span>di combattimento</span>",
+      mStamina:"Sistema di Stamina",
+      mStaminaD:"Tre barre di stamina alimentano i movimenti. Il Dash usa 1 barra, il Wide Slash ne consuma 2. Si ricarica più in fretta a terra o in wallrun.",
+      mInstability:"Instabilità",
+      mInstabilityD:"Sale dall'1% al 100% fallendo le parate, venendo sbattuto o subendo il rinculo di un proiettile parato. Cala lentamente o colpendo in mischia.",
+      mDestab:"Destabilizzazione",
+      mDestabD:"Superare il 100% di Instabilità ti blocca in stato Destabilizzato per 5 secondi. Attacchi, parate e dash sono disattivati.",
+      trailerTitle:'Guarda il <span>trailer</span>',
+      watchTrailer:"Guarda il trailer su YouTube",
+      galleryTitle:'Creazioni della <span>community</span>',
+      galleryEmpty:"Ancora nessuna creazione — torna presto!",
+      joinTitle:'Unisciti alla <span>community</span>',
+      joinSub:"Il gioco ti aspetta. Anche il Discord.",
+      visitors:"visitatori",
+      audioPlay:"Atmosfera", audioClose:"Chiudi",
+      disclaimer:"Sito per fan non ufficiale · non affiliato ai creatori del gioco"
+    },
+    ja: {
+      navAbout:"ゲーム", navTrailer:"トレーラー", navGallery:"作品", navJoin:"参加",
+      eyebrow:"// ファンハブ · 非公式",
+      heroSub:"ゲーム配信中 — レースに参加しよう",
+      play:"▶ 今すぐプレイ", discord:"Discord",
+      statPlaying:"オンライン", statLikes:"いいね", statVisits:"訪問数", statFavorites:"お気に入り",
+      scroll:"スクロール ↓",
+      aboutTitle:'<span>RED LINER</span> について',
+      aboutP1:"RED LINER は、ダークで赤く鋭い独自の世界観を持つ Roblox 体験です。このサイトは、ゲーム・ライブ統計・コミュニティを追うためにファンが作ったハブです。",
+      aboutP2:"大切な情報をひとつの場所に。公式ゲームリンク、コミュニティ Discord、トレーラー、ビジュアル。表示される統計は Roblox 公式 API から直接取得しています。",
+      metaPlatform:"プラットフォーム", metaControls:"操作", metaKbm:"キーボード＆マウス",
+      metaStatus:"状態", metaLive:"配信中", metaPrice:"価格", metaFree:"無料",
+      navClips:"クリップ",
+      clipsTitle:"<span>コミュニティ</span>のクリップ",
+      clipsEmpty:"まだクリップがありません — またチェックしてね！",
+      submitCreation:"+ 作品を投稿",
+      navLinks:"リンク",
+      linksTitle:"公式<span>リンク</span>",
+      lcGame:"ゲーム",
+      lcTech:"テックテスト",
+      lcGroup:"コミュニティ",
+      lcDiscord:"サーバー",
+      lcPlaylist:"プレイリスト",
+      lcMusic:"音楽",
+      lcSupport:"支援",
+      navCredits:"クレジット",
+      creditsTitle:"<span>感謝</span>",
+      cDev:"ゲーム開発者",
+      cWiki:"Wiki",
+      cDoc:"技術ドキュメント",
+      cSite:"このサイト（ファン）",
+      creditsNote:"そしてコミュニティ、テスター、コンテンツクリエイターの皆さんに感謝。",
+      ideaTitle:"アイデア / フィードバック",
+      ideaFabLabel:"フィードバック",
+      ideaHeading:"サイトへのアイデアは？",
+      ideaSub:"ユーザー名とメッセージを残してね。サイト改善に役立ちます。",
+      ideaPseudoPh:"ユーザー名 (Discord)",
+      ideaMsgPh:"アイデアやメッセージ...",
+      ideaSend:"送信",
+      ideaOk:"送信しました、ありがとう！",
+      ideaErrEmpty:"ユーザー名とメッセージを入力してね。",
+      ideaErrWait:"再送まであと {t} 待ってね。",
+      ideaErrSend:"送信に失敗。もう一度試してね。",
+      navResources:"資料",
+      resTitle:"ガイド & <span>資料</span>",
+      resForPlayers:"プレイヤー向け",
+      resForDevs:"さらに深く",
+      resBy:"作成",
+      resWiki:"RED LINER Wiki",
+      resWikiD:"新規プレイヤー向けの完全ガイド：仕組み、武器、ムーブメントテク、戦闘戦略。",
+      resDoc:"技術ドキュメント",
+      resDocD:"ゲームとそのシステムに関する詳細で未整理の情報をまとめた資料。",
+      navArsenal:"武器",
+      navMechanics:"仕組み",
+      metaGenre:"ジャンル",
+      metaFps:"ハイパーFPS",
+      arsenalTitle:"<span>武器</span>",
+      wMelee:"メイン近接",
+      wKatana:"(カタナ)",
+      wGear:"左手ギア",
+      wRanged:"遠距離武器 (Q)",
+      wKatanaD:"メイン近接武器。Parry (F) で弾を弾き、速さが勝敗を決める正面衝突を制し、スライド中に強力な Wide Slash をチャージ。",
+      wGrapplerD:"ハイパー機動を可能に。Chase で空中の敵にフック、または上空から Ground Slam で着地時に大きな不安定を付与。",
+      wCastigateD:"Scan Aim ロックオン付きの重量マグナムリボルバー。弾は壁を貫通し、命中時に回復。",
+      wPhoenixD:"遅く重い爆発弾を撃つ携帯榴弾砲。範囲ダメージを持つ。",
+      wSiegeD:"コーン状に拡散する二連ショットガン。高い反動で射手を後方へ押し出す。",
+      wMonarchD:"対物スナイパーライフル。スコープ時に標的を強調し、厚い壁を貫通する。",
+      mechTitle:"戦闘<span>システム</span>",
+      mStamina:"スタミナシステム",
+      mStaminaD:"3本のスタミナバーが動きを支える。Dash は1本、Wide Slash は2本消費。地上やウォールラン中は回復が速い。",
+      mInstability:"不安定",
+      mInstabilityD:"パリィ失敗、スラム被弾、弾かれた弾の反動で1%から100%まで上昇。時間や近接命中で徐々に減少。",
+      mDestab:"ディスタビライズ",
+      mDestabD:"不安定が100%を超えると5秒間ディスタビライズ状態に。攻撃・パリィ・ダッシュが一時的に無効化。",
+      trailerTitle:'<span>トレーラー</span>を見る',
+      watchTrailer:"YouTube でトレーラーを見る",
+      galleryTitle:'<span>コミュニティ</span>の作品',
+      galleryEmpty:"まだ作品がありません — またチェックしてね！",
+      joinTitle:'<span>コミュニティ</span>に参加',
+      joinSub:"ゲームが待っている。Discord も。",
+      visitors:"訪問者",
+      audioPlay:"BGM", audioClose:"閉じる",
+      disclaimer:"非公式ファンサイト · ゲーム制作者とは無関係です"
+    },
+    ko: {
+      navAbout:"게임", navTrailer:"트레일러", navGallery:"작품", navJoin:"참여",
+      eyebrow:"// 팬 허브 · 비공식",
+      heroSub:"게임 출시 — 레이스에 참여하세요",
+      play:"▶ 지금 플레이", discord:"Discord",
+      statPlaying:"온라인", statLikes:"좋아요", statVisits:"방문수", statFavorites:"즐겨찾기",
+      scroll:"스크롤 ↓",
+      aboutTitle:'<span>RED LINER</span> 소개',
+      aboutP1:"RED LINER는 어둡고 붉으며 날카로운 독자적인 분위기를 가진 Roblox 경험입니다. 이 사이트는 게임과 실시간 통계, 커뮤니티를 따라가기 위해 팬이 만든 허브입니다.",
+      aboutP2:"중요한 정보를 한곳에. 공식 게임 링크, 커뮤니티 Discord, 트레일러, 비주얼. 표시되는 통계는 Roblox 공개 API에서 직접 가져옵니다.",
+      metaPlatform:"플랫폼", metaControls:"조작", metaKbm:"키보드 & 마우스",
+      metaStatus:"상태", metaLive:"출시됨", metaPrice:"가격", metaFree:"무료",
+      navClips:"클립",
+      clipsTitle:"<span>커뮤니티</span> 클립",
+      clipsEmpty:"아직 클립이 없습니다 — 곧 다시 확인해 주세요!",
+      submitCreation:"+ 작품 제출",
+      navLinks:"링크",
+      linksTitle:"공식 <span>링크</span>",
+      lcGame:"게임",
+      lcTech:"테크 테스트",
+      lcGroup:"커뮤니티",
+      lcDiscord:"서버",
+      lcPlaylist:"플레이리스트",
+      lcMusic:"음악",
+      lcSupport:"후원",
+      navCredits:"크레딧",
+      creditsTitle:"<span>감사합니다</span>",
+      cDev:"게임 개발자",
+      cWiki:"위키",
+      cDoc:"기술 문서",
+      cSite:"이 사이트 (팬)",
+      creditsNote:"그리고 커뮤니티, 테스터, 콘텐츠 제작자 모두에게 감사합니다.",
+      ideaTitle:"아이디어 / 피드백",
+      ideaFabLabel:"피드백",
+      ideaHeading:"사이트 아이디어가 있나요?",
+      ideaSub:"닉네임과 메시지를 남겨주세요 — 사이트 개선에 도움이 됩니다.",
+      ideaPseudoPh:"닉네임 (Discord)",
+      ideaMsgPh:"아이디어나 메시지...",
+      ideaSend:"보내기",
+      ideaOk:"보냈습니다, 감사합니다!",
+      ideaErrEmpty:"닉네임과 메시지를 입력하세요.",
+      ideaErrWait:"다시 보내려면 {t} 기다려주세요.",
+      ideaErrSend:"전송 실패. 다시 시도하세요.",
+      navResources:"자료",
+      resTitle:"가이드 & <span>자료</span>",
+      resForPlayers:"플레이어용",
+      resForDevs:"더 깊이",
+      resBy:"제작",
+      resWiki:"RED LINER 위키",
+      resWikiD:"신규 플레이어를 위한 완전 가이드: 시스템, 무기, 무브먼트 테크, 전투 전략.",
+      resDoc:"기술 문서",
+      resDocD:"게임과 시스템에 대한 상세하고 정리되지 않은 정보를 모은 문서.",
+      navArsenal:"무기",
+      navMechanics:"시스템",
+      metaGenre:"장르",
+      metaFps:"하이퍼 FPS",
+      arsenalTitle:"<span>무기고</span>",
+      wMelee:"메인 근접",
+      wKatana:"(카타나)",
+      wGear:"왼손 장비",
+      wRanged:"원거리 무기 (Q)",
+      wKatanaD:"메인 근접 무기. Parry (F)로 총알을 튕기고, 속도가 승부를 가르는 정면 대결을 제압하며, 슬라이드 중 강력한 Wide Slash를 충전.",
+      wGrapplerD:"하이퍼 기동성을 부여. Chase로 공중의 적에게 후크하거나, 높은 곳에서 Ground Slam으로 착지 시 막대한 불안정 부여.",
+      wCastigateD:"Scan Aim 락온이 달린 무거운 매그넘 리볼버. 총알이 벽을 관통하고 명중 시 회복.",
+      wPhoenixD:"느리고 무거운 폭발 탄을 쏘는 휴대용 곡사포. 범위 피해를 가짐.",
+      wSiegeD:"원뿔형으로 퍼지는 더블 배럴 샷건. 강한 반동으로 사수를 뒤로 밀어냄.",
+      wMonarchD:"대물 저격 소총. 조준 시 표적을 강조하고 두꺼운 벽을 관통.",
+      mechTitle:"전투 <span>시스템</span>",
+      mStamina:"스태미나 시스템",
+      mStaminaD:"세 개의 스태미나 바가 움직임을 지원. Dash는 1칸, Wide Slash는 2칸 소모. 지상이나 월런 중 더 빨리 회복.",
+      mInstability:"불안정",
+      mInstabilityD:"패리 실패, 슬램 피격, 패리된 총알 반동 시 1%에서 100%까지 상승. 시간이 지나거나 근접 명중 시 서서히 감소.",
+      mDestab:"불안정화",
+      mDestabD:"불안정이 100%를 초과하면 5초간 불안정화 상태. 공격, 패리, 대시가 일시적으로 비활성화.",
+      trailerTitle:'<span>트레일러</span> 보기',
+      watchTrailer:"YouTube에서 트레일러 보기",
+      galleryTitle:'<span>커뮤니티</span> 작품',
+      galleryEmpty:"아직 작품이 없습니다 — 곧 다시 확인해 주세요!",
+      joinTitle:'<span>커뮤니티</span>에 참여',
+      joinSub:"게임이 기다립니다. Discord도요.",
+      visitors:"방문자",
+      audioPlay:"BGM", audioClose:"닫기",
+      disclaimer:"비공식 팬 사이트 · 게임 제작자와 무관합니다"
+    },
+    zh: {
+      navAbout:"游戏", navTrailer:"预告片", navGallery:"作品", navJoin:"加入",
+      eyebrow:"// 粉丝中心 · 非官方",
+      heroSub:"游戏已上线 — 加入竞速",
+      play:"▶ 立即游玩", discord:"Discord",
+      statPlaying:"在线", statLikes:"点赞", statVisits:"访问量", statFavorites:"收藏",
+      scroll:"滚动 ↓",
+      aboutTitle:'关于 <span>RED LINER</span>',
+      aboutP1:"RED LINER 是一款风格鲜明的 Roblox 体验：暗黑、赤红、锐利。本站是一名粉丝制作的中心，用于追踪游戏、实时数据和社区。",
+      aboutP2:"重要信息一站式集合：官方游戏链接、社区 Discord、预告片和视觉素材。所显示的数据直接来自 Roblox 公开 API。",
+      metaPlatform:"平台", metaControls:"操作", metaKbm:"键盘和鼠标",
+      metaStatus:"状态", metaLive:"已上线", metaPrice:"价格", metaFree:"免费",
+      navClips:"片段",
+      clipsTitle:"<span>社区</span>片段",
+      clipsEmpty:"暂无片段 — 敬请期待！",
+      submitCreation:"+ 提交你的作品",
+      navLinks:"链接",
+      linksTitle:"官方<span>链接</span>",
+      lcGame:"游戏",
+      lcTech:"技术测试",
+      lcGroup:"社区",
+      lcDiscord:"服务器",
+      lcPlaylist:"歌单",
+      lcMusic:"音乐",
+      lcSupport:"支持",
+      navCredits:"鸣谢",
+      creditsTitle:"<span>感谢</span>",
+      cDev:"游戏开发者",
+      cWiki:"维基",
+      cDoc:"技术文档",
+      cSite:"本站（粉丝）",
+      creditsNote:"同时感谢整个社区、测试者和内容创作者。",
+      ideaTitle:"想法 / 反馈",
+      ideaFabLabel:"反馈",
+      ideaHeading:"对网站有想法吗？",
+      ideaSub:"留下你的昵称和留言 — 帮助我改进网站。",
+      ideaPseudoPh:"昵称 (Discord)",
+      ideaMsgPh:"你的想法或留言...",
+      ideaSend:"发送",
+      ideaOk:"已发送，谢谢！",
+      ideaErrEmpty:"请填写昵称和留言。",
+      ideaErrWait:"请等 {t} 后再发送。",
+      ideaErrSend:"发送失败，请重试。",
+      navResources:"资料",
+      resTitle:"指南 & <span>资料</span>",
+      resForPlayers:"面向玩家",
+      resForDevs:"深入了解",
+      resBy:"作者",
+      resWiki:"RED LINER 维基",
+      resWikiD:"为新玩家提供的完整指南：机制、武器、移动技巧和战斗策略。",
+      resDoc:"技术文档",
+      resDocD:"汇集游戏及其系统详细原始信息的文档。",
+      navArsenal:"武器",
+      navMechanics:"机制",
+      metaGenre:"类型",
+      metaFps:"超高速 FPS",
+      arsenalTitle:"<span>武器库</span>",
+      wMelee:"主近战",
+      wKatana:"（武士刀）",
+      wGear:"左手装备",
+      wRanged:"远程武器 (Q)",
+      wKatanaD:"你的主近战武器。用 Parry (F) 弹开子弹，正面交锋由速度决出胜负，滑行时蓄力释放毁灭性的 Wide Slash。",
+      wGrapplerD:"实现超高机动。用 Chase 钩住空中敌人，或从高处发动 Ground Slam，落地时造成巨大不稳定。",
+      wCastigateD:"带 Scan Aim 锁定的重型马格南左轮。子弹穿墙并在命中时为你回血。",
+      wPhoenixD:"发射缓慢沉重爆炸弹的手持榴弹炮，具有范围伤害。",
+      wSiegeD:"呈锥形散射的双管霰弹枪。高后坐力将射手向后推。",
+      wMonarchD:"反器材狙击枪，瞄准时高亮目标并穿透厚墙。",
+      mechTitle:"战斗<span>机制</span>",
+      mStamina:"耐力系统",
+      mStaminaD:"三条耐力条驱动你的动作。Dash 消耗 1 条，Wide Slash 消耗 2 条。在地面或墙跑时回复更快。",
+      mInstability:"不稳定",
+      mInstabilityD:"弹反失败、被砸、承受被弹反子弹的后坐力时从 1% 升到 100%。随时间或近战命中缓慢下降。",
+      mDestab:"失稳",
+      mDestabD:"不稳定超过 100% 会让你进入失稳状态 5 秒。攻击、弹反和冲刺暂时被禁用。",
+      trailerTitle:'观看<span>预告片</span>',
+      watchTrailer:"在 YouTube 观看预告片",
+      galleryTitle:'<span>社区</span>作品',
+      galleryEmpty:"暂无作品 — 敬请期待！",
+      joinTitle:'加入<span>社区</span>',
+      joinSub:"游戏在等你。Discord 也是。",
+      visitors:"访客",
+      audioPlay:"音乐", audioClose:"关闭",
+      disclaimer:"非官方粉丝网站 · 与游戏创作者无关"
+    },
+    ru: {
+      navAbout:"Игра", navTrailer:"Трейлер", navGallery:"Работы", navJoin:"Вступить",
+      eyebrow:"// Фан-хаб · неофициальный",
+      heroSub:"Игра доступна — присоединяйся к гонке",
+      play:"▶ Играть сейчас", discord:"Discord",
+      statPlaying:"в сети", statLikes:"лайки", statVisits:"посещения", statFavorites:"избранное",
+      scroll:"листай ↓",
+      aboutTitle:'О <span>RED LINER</span>',
+      aboutP1:"RED LINER — это опыт в Roblox с выразительным стилем: тёмный, красный и резкий. Этот сайт — хаб, созданный фанатом, чтобы следить за игрой, её статистикой в реальном времени и сообществом.",
+      aboutP2:"Всё важное в одном месте: официальная ссылка на игру, Discord сообщества, трейлер и визуалы. Показанная статистика берётся напрямую из публичного API Roblox.",
+      metaPlatform:"Платформа", metaControls:"Управление", metaKbm:"Клавиатура и мышь",
+      metaStatus:"Статус", metaLive:"Доступно", metaPrice:"Цена", metaFree:"Бесплатно",
+      navClips:"Клипы",
+      clipsTitle:"Клипы <span>сообщества</span>",
+      clipsEmpty:"Пока нет клипов — загляни позже!",
+      submitCreation:"+ Отправить свою работу",
+      navLinks:"Ссылки",
+      linksTitle:"Официальные <span>ссылки</span>",
+      lcGame:"Игра",
+      lcTech:"Tech Test",
+      lcGroup:"Сообщество",
+      lcDiscord:"Сервер",
+      lcPlaylist:"Плейлист",
+      lcMusic:"Музыка",
+      lcSupport:"Поддержать",
+      navCredits:"Авторы",
+      creditsTitle:"Спасибо <span>им</span>",
+      cDev:"Разработчик игры",
+      cWiki:"Вики",
+      cDoc:"Техническая док.",
+      cSite:"Этот сайт (фан)",
+      creditsNote:"И спасибо всему сообществу, тестерам и контент-мейкерам.",
+      ideaTitle:"Идея / Отзыв",
+      ideaFabLabel:"Отзыв",
+      ideaHeading:"Есть идея для сайта?",
+      ideaSub:"Оставь ник и сообщение — это помогает улучшать сайт.",
+      ideaPseudoPh:"Ник (Discord)",
+      ideaMsgPh:"Твоя идея или сообщение...",
+      ideaSend:"Отправить",
+      ideaOk:"Отправлено, спасибо!",
+      ideaErrEmpty:"Заполни ник и сообщение.",
+      ideaErrWait:"Подожди {t} перед повторной отправкой.",
+      ideaErrSend:"Не удалось отправить. Попробуй снова.",
+      navResources:"Ресурсы",
+      resTitle:"Гайды и <span>ресурсы</span>",
+      resForPlayers:"Для игроков",
+      resForDevs:"Углубиться",
+      resBy:"Автор",
+      resWiki:"Вики RED LINER",
+      resWikiD:"Полный гайд для новичков: механики, оружие, техники движения и боевые стратегии.",
+      resDoc:"Техническая док.",
+      resDocD:"Документ с подробной, необработанной информацией об игре и её системах.",
+      navArsenal:"Арсенал",
+      navMechanics:"Механики",
+      metaGenre:"Жанр",
+      metaFps:"Hyper FPS",
+      arsenalTitle:"<span>Арсенал</span>",
+      wMelee:"Основной ближний бой",
+      wKatana:"(Катана)",
+      wGear:"Снаряжение левой руки",
+      wRanged:"Дальнее оружие (Q)",
+      wKatanaD:"Твоё оружие ближнего боя. Отбивай пули с Parry (F), сходись в лоб, где скорость решает исход, и заряжай разрушительные Wide Slash в слайде.",
+      wGrapplerD:"Даёт гипермобильность. Используй Chase, чтобы цепляться к врагам в воздухе, или выполни Ground Slam сверху для огромной Нестабильности при ударе.",
+      wCastigateD:"Тяжёлый магнум-револьвер с захватом Scan Aim. Пули пробивают стены и лечат при попадании.",
+      wPhoenixD:"Ручная гаубица, стреляющая медленными тяжёлыми взрывными снарядами с уроном по площади.",
+      wSiegeD:"Двуствольный дробовик с конусным разбросом. Сильная отдача толкает стрелка назад.",
+      wMonarchD:"Противоматериальная снайперская винтовка: подсвечивает цели в прицеле и пробивает толстые стены.",
+      mechTitle:"Боевые <span>механики</span>",
+      mStamina:"Система стамины",
+      mStaminaD:"Три полоски стамины питают движения. Dash тратит 1 полоску, Wide Slash — 2. Стамина быстрее восстанавливается на земле или на wallrun.",
+      mInstability:"Нестабильность",
+      mInstabilityD:"Растёт с 1% до 100% при неудачных парированиях, слэмах или отдаче отражённой пули. Медленно спадает со временем или при ударах в ближнем бою.",
+      mDestab:"Дестабилизация",
+      mDestabD:"Превышение 100% Нестабильности запирает тебя в состоянии Дестабилизации на 5 секунд. Атаки, парирования и рывки отключены.",
+      trailerTitle:'Смотри <span>трейлер</span>',
+      watchTrailer:"Смотреть трейлер на YouTube",
+      galleryTitle:'Работы <span>сообщества</span>',
+      galleryEmpty:"Пока нет работ — загляни позже!",
+      joinTitle:'Вступай в <span>сообщество</span>',
+      joinSub:"Игра ждёт. И Discord тоже.",
+      visitors:"посетителей",
+      audioPlay:"Атмосфера", audioClose:"Закрыть",
+      disclaimer:"Неофициальный фан-сайт · не связан с создателями игры"
+    }
+  };
+  // Détecte la langue du navigateur (code 2 lettres). Défaut : anglais.
+  const code = (navigator.language || navigator.userLanguage || 'en').toLowerCase().slice(0,2);
+  const LANG = I18N[code] ? code : 'en';
+  const T = I18N[LANG];
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(T[k] !== undefined) el.innerHTML = T[k];
+  });
+
+  // ---- Glitch subtil sur le titre (rare, propre) ----
+  const heroTitle = document.getElementById('heroTitle');
+  function glitchOnce(){
+    heroTitle.classList.add('glitch');
+    setTimeout(()=> heroTitle.classList.remove('glitch'), 140);
+  }
+  function scheduleGlitch(){
+    setTimeout(()=>{ glitchOnce(); scheduleGlitch(); }, 3500 + Math.random()*4500);
+  }
+  scheduleGlitch();
+
+  // ---- Galerie des créations (depuis creations.js) ----
+  function renderGallery(){
+    const grid = document.getElementById('galleryGrid');
+    const empty = document.getElementById('galleryEmpty');
+    if(!grid) return;
+    const list = (typeof CREATIONS !== 'undefined' && Array.isArray(CREATIONS)) ? CREATIONS : [];
+    grid.innerHTML = "";
+    if(list.length === 0){
+      if(empty) empty.style.display = 'block';
+      return;
+    }
+    list.forEach(c=>{
+      const shot = document.createElement('div');
+      shot.className = 'shot';
+      const img = document.createElement('img');
+      img.src = c.image || "";
+      img.alt = (c.author ? "Création de " + c.author : "Création");
+      img.loading = "lazy";
+      img.style.cursor = "zoom-in";
+      img.addEventListener('click', ()=> openLightbox(c.image, c.author || ""));
+      shot.appendChild(img);
+      if(c.author){
+        let author;
+        if(c.link){
+          author = document.createElement('a');
+          author.className = 'author';
+          author.href = c.link;
+          author.target = "_blank";
+          author.rel = "noopener";
+        } else {
+          author = document.createElement('span');
+          author.className = 'author';
+        }
+        author.appendChild(document.createTextNode(c.author));
+        shot.appendChild(author);
+      }
+      grid.appendChild(shot);
+    });
+  }
+  renderGallery();
+
+  // ---- Clips communautaires (depuis clips.js) ----
+  function renderClips(){
+    const grid = document.getElementById('clipsGrid');
+    const empty = document.getElementById('clipsEmpty');
+    if(!grid) return;
+    const list = (typeof CLIPS !== 'undefined' && Array.isArray(CLIPS)) ? CLIPS : [];
+    grid.innerHTML = "";
+    if(list.length === 0){
+      if(empty) empty.style.display = 'block';
+      grid.style.display = 'none';
+      return;
+    }
+    list.forEach(c=>{
+      const clip = document.createElement('div');
+      clip.className = 'clip';
+
+      const media = document.createElement('div');
+      media.className = 'clip-media';
+
+      if(c.type === 'youtube' && c.id){
+        const iframe = document.createElement('iframe');
+        iframe.src = "https://www.youtube.com/embed/" + c.id;
+        iframe.title = c.title || "Clip";
+        iframe.loading = "lazy";
+        iframe.allow = "accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        iframe.allowFullscreen = true;
+        media.appendChild(iframe);
+      } else if(c.type === 'video' && c.url){
+        // fichier vidéo hébergé directement (ex: GitHub) — lecteur natif
+        const video = document.createElement('video');
+        video.src = c.url;
+        video.controls = true;
+        video.preload = "metadata";
+        video.playsInline = true;
+        if(c.thumb) video.poster = c.thumb;
+        video.style.width = "100%";
+        video.style.height = "100%";
+        video.style.objectFit = "cover";
+        video.style.display = "block";
+        video.style.background = "#000";
+        media.appendChild(video);
+      } else if(c.type === 'embed' && c.url){
+        const iframe = document.createElement('iframe');
+        iframe.src = c.url;
+        iframe.title = c.title || "Clip";
+        iframe.loading = "lazy";
+        iframe.allowFullscreen = true;
+        media.appendChild(iframe);
+      } else if(c.url){
+        // type "link" : vignette cliquable
+        const a = document.createElement('a');
+        a.href = c.url; a.target = "_blank"; a.rel = "noopener";
+        if(c.thumb){
+          const img = document.createElement('img');
+          img.src = c.thumb; img.alt = c.title || "Clip"; img.loading = "lazy";
+          a.appendChild(img);
+        }
+        const ov = document.createElement('span');
+        ov.className = 'play-ov';
+        a.appendChild(ov);
+        media.appendChild(a);
+      }
+
+      clip.appendChild(media);
+
+      const info = document.createElement('div');
+      info.className = 'clip-info';
+      if(c.title){
+        const t = document.createElement('div');
+        t.className = 'clip-title';
+        t.textContent = c.title;
+        info.appendChild(t);
+      }
+      if(c.author){
+        const au = document.createElement('div');
+        au.className = 'clip-author';
+        au.textContent = c.author;
+        info.appendChild(au);
+      }
+      clip.appendChild(info);
+      grid.appendChild(clip);
+    });
+  }
+  renderClips();
+
+  // ---- Lecteur audio (ambiance) ----
+  const audioBtn = document.getElementById('audioBtn');
+  const spotifyWrap = document.getElementById('spotifyWrap');
+  if(audioBtn && spotifyWrap){
+    audioBtn.addEventListener('click', ()=>{
+      const open = spotifyWrap.classList.toggle('open');
+      audioBtn.innerHTML = open
+        ? '\u00D7 <span>' + T.audioClose + '</span>'
+        : '\u25B6 <span>' + T.audioPlay + '</span>';
+    });
+  }
+
+  // ---- Reveal au scroll ----
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.15 });
+  document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+  // ---- Barre de progression de scroll ----
+  const scrollProgress = document.getElementById('scrollProgress');
+  function onScroll(){
+    const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    scrollProgress.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  // ---- Lightbox galerie ----
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxAuthor = document.getElementById('lightboxAuthor');
+  window.openLightbox = function(src, author){
+    lightboxImg.src = src;
+    lightboxAuthor.textContent = author || "";
+    lightboxAuthor.style.display = author ? 'block' : 'none';
+    lightbox.classList.add('open');
+  };
+  function closeLightbox(){ lightbox.classList.remove('open'); lightboxImg.src=""; }
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e=>{ if(e.target === lightbox) closeLightbox(); });
+
+  // ---- Apply title/placeholder translations ----
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{
+    const k = el.getAttribute('data-i18n-title'); if(T[k]) el.title = T[k];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const k = el.getAttribute('data-i18n-ph'); if(T[k]) el.placeholder = T[k];
+  });
+
+  // ---- Idée / Feedback (webhook Discord) ----
+  const ideaFab = document.getElementById('ideaFab');
+  const ideaModal = document.getElementById('ideaModal');
+  const ideaClose = document.getElementById('ideaClose');
+  const ideaSend = document.getElementById('ideaSend');
+  const ideaStatus = document.getElementById('ideaStatus');
+  const WEBHOOK = "https://discord.com/api/webhooks/1515620063099621436/0URzp_bgb_A-GJH3_p-QHf7EM8DmDmuVF3RrJr9hkIZs7W5cVFurufNYiVikRAM2JDs2";
+
+  if(ideaFab){
+    ideaFab.addEventListener('click', ()=> ideaModal.classList.add('open'));
+    ideaClose.addEventListener('click', ()=> ideaModal.classList.remove('open'));
+    ideaModal.addEventListener('click', e=>{ if(e.target === ideaModal) ideaModal.classList.remove('open'); });
+
+    let lastSend = 0;
+    // récupère le dernier envoi stocké (persiste après rechargement)
+    try { lastSend = parseInt(localStorage.getItem('rl_idea_last') || '0', 10) || 0; } catch(e){}
+    const COOLDOWN = 5 * 60 * 1000; // 5 minutes
+
+    ideaSend.addEventListener('click', async ()=>{
+      const pseudo = document.getElementById('ideaPseudo').value.trim();
+      const message = document.getElementById('ideaMessage').value.trim();
+      ideaStatus.className = 'idea-status';
+
+      if(!pseudo || !message){
+        ideaStatus.textContent = T.ideaErrEmpty; ideaStatus.classList.add('err'); return;
+      }
+      // anti-spam : 1 envoi / 5 min, persistant
+      const now = Date.now();
+      const remaining = COOLDOWN - (now - lastSend);
+      if(remaining > 0){
+        const mins = Math.floor(remaining / 60000);
+        const secs = Math.ceil((remaining % 60000) / 1000);
+        const wait = mins > 0 ? (mins + ' min ' + secs + 's') : (secs + 's');
+        ideaStatus.textContent = T.ideaErrWait.replace('{t}', wait);
+        ideaStatus.classList.add('err');
+        return;
+      }
+
+      ideaSend.disabled = true;
+      ideaStatus.textContent = "...";
+      try{
+        const res = await fetch(WEBHOOK, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({
+            username: "RED LINER · Idées site",
+            embeds: [{
+              title: "💡 Nouvelle idée / feedback",
+              color: 14815775,
+              fields: [
+                { name: "Pseudo", value: pseudo.slice(0,256) },
+                { name: "Message", value: message.slice(0,1024) }
+              ],
+              timestamp: new Date().toISOString()
+            }]
+          })
+        });
+        if(res.ok){
+          lastSend = now;
+          try { localStorage.setItem('rl_idea_last', String(now)); } catch(e){}
+          ideaStatus.textContent = T.ideaOk; ideaStatus.classList.add('ok');
+          document.getElementById('ideaPseudo').value = "";
+          document.getElementById('ideaMessage').value = "";
+          setTimeout(()=> ideaModal.classList.remove('open'), 1600);
+        } else {
+          ideaStatus.textContent = T.ideaErrSend; ideaStatus.classList.add('err');
+        }
+      } catch(e){
+        ideaStatus.textContent = T.ideaErrSend; ideaStatus.classList.add('err');
+      } finally {
+        ideaSend.disabled = false;
+      }
+    });
+  }
+</script>
+<script src="counter.js"></script>
+<script src="roblox-stats.js"></script>
+</body>
+</html>
