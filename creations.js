@@ -20,4 +20,21 @@ const CREATIONS = [
     link: "https://discord.com/channels/1399758449423810703/1512970096740663537"
   },
 
+  {
+    image: "https://media.discordapp.net/attachments/1506209190530650262/1506209190786498570/Khong_Co_Tieu_e91_20260519140815.png?ex=6a2fb51f&is=6a2e639f&hm=889bb1725876841d002dac2f7ae2e6b668a7eec4edb68cf79f2c44cbd8f9eedc&=&format=webp&quality=lossless&width=767&height=1006",
+    author: "Bloodliner",
+    link: "https://discord.com/channels/1399758449423810703/1506209190530650262"
+  },
+
+  {
+    image: "https://media.discordapp.net/attachments/1513806587402387477/1513806589025583204/king_vs_giant_scene_cc__wm.png?ex=6a2fa93f&is=6a2e57bf&hm=2fa630187918b311317d62dd3df388f325f649dc3540887a092b593b19cb54ea&=&format=webp&quality=lossless&width=1603&height=902",
+    author: "naisuuw",
+    link: "https://discord.com/channels/1399758449423810703/1513806587402387477"
+  },
+
+  {
+    image: "https://media.discordapp.net/attachments/1513203980883329084/1513203981642633246/redliner.png?ex=6a301b07&is=6a2ec987&hm=882e574741b56f97803da64077bb73d8cc5cbce4155302739cff88c267d7e76e&=&format=webp&quality=lossless&width=1655&height=902",
+    author: "dennistriel",
+    link: "https://discord.com/channels/1399758449423810703/1513203980883329084"
+  },
 ];
