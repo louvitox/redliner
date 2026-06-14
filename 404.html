@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — RED LINER</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23060606'/%3E%3Cpath d='M6 22 L20 6 L24 6 L10 22 Z' fill='%23e2101f'/%3E%3Crect x='6' y='24' width='20' height='3' fill='%23e2101f'/%3E%3C/svg%3E">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+  :root{ --black:#060606; --red:#e2101f; --red-deep:#7a0a13; --white:#f5f5f0; --grey:#6a6a6a; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--black); color:var(--white); font-family:'Oswald',sans-serif;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    padding:24px; overflow:hidden;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:2;
+    opacity:0.06; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  body::after{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:1;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.02) 0 1px, transparent 1px 3px);
+    opacity:0.5;
+  }
+  .halo{ position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:120vw; height:50vh; background:radial-gradient(ellipse at center, rgba(226,16,31,0.16), transparent 60%); animation:halo 5s ease-in-out infinite; pointer-events:none; }
+  @keyframes halo{ 0%,100%{opacity:.7} 50%{opacity:1} }
+  .wrap{ position:relative; z-index:3; }
+  .code{
+    font-size:clamp(90px,22vw,260px); font-weight:700; line-height:0.9;
+    text-shadow:0 0 40px rgba(226,16,31,0.4); position:relative;
+    animation:glitch 4s infinite;
+  }
+  .code span{ color:var(--red); }
+  @keyframes glitch{ 0%,92%,100%{transform:translate(0)} 93%{transform:translate(-4px,2px)} 94%{transform:translate(4px,-2px)} 95%{transform:translate(0)} }
+  h1{ font-size:clamp(20px,4vw,34px); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-top:10px; }
+  p{ font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.1em; color:var(--grey); margin:18px 0 34px; }
+  .jp{ font-size:14px; letter-spacing:0.5em; color:var(--red); opacity:0.55; margin-bottom:20px; }
+  .btn{
+    font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--red); border:1px solid var(--red); padding:15px 32px; text-decoration:none;
+    display:inline-block; transition:color .25s, background .25s;
+  }
+  .btn:hover{ color:var(--black); background:var(--red); }
+</style>
+</head>
+<body>
+<div class="halo"></div>
+<div class="wrap">
+  <div class="jp">エラー</div>
+  <div class="code">4<span>0</span>4</div>
+  <h1 id="title">Page introuvable</h1>
+  <p id="sub">Cette page n'existe pas ou a été déplacée.</p>
+  <a href="/" class="btn" id="back">← Retour à l'accueil</a>
+</div>
+<script>
+  // FR par défaut, EN sinon
+  if(!(navigator.language||'en').toLowerCase().startsWith('fr')){
+    document.documentElement.lang='en';
+    document.getElementById('title').textContent='Page not found';
+    document.getElementById('sub').textContent="This page doesn't exist or was moved.";
+    document.getElementById('back').textContent='← Back to home';
+  }
+</script>
+</body>
+</html>
